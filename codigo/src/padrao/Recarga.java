@@ -31,7 +31,7 @@ public class Recarga {
     public boolean disponivelParaRecarga(){
         return vaga1 || vaga2;
     }
-    public int recarrega(){
+    public int conectaParaRecarrega(){
         if (vaga1)
             return 1;
         if (vaga2)

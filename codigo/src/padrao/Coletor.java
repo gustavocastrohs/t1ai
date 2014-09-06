@@ -3,7 +3,6 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
 package padrao;
 
 import java.util.ArrayList;
@@ -13,103 +12,94 @@ import java.util.ArrayList;
  * @author 09201801
  */
 public class Coletor {
+
     private ArrayList<Lixo> lixeira;
-    private boolean  statusLixeira;
+    private boolean statusLixeira;
     private ArrayList<Lixeira> locaisLixeiras;
     private ArrayList<Recarga> locaisPontosDeRecarga;
     private int capacidadeLixeira;
-    private int energia;
+    private int energiaAtual;
     private int energiaMinima;
+    private int energiaMaxima;
 
-    public Coletor(ArrayList<Lixeira> locaisLixeiras, int capacidadeLixeira, int energia, int energiaMinima) {
+    public Coletor(ArrayList<Lixeira> locaisLixeiras, int capacidadeLixeira, int energiaAtual, int energiaMaxima, int energiaMinima) {
         this.locaisLixeiras = locaisLixeiras;
         this.capacidadeLixeira = capacidadeLixeira;
-        this.energia = energia;
+        this.energiaAtual = energiaAtual;
+        this.energiaMaxima = energiaMaxima;
         this.energiaMinima = energiaMinima;
-        
-        
+
     }
 
     public Coletor() {
     }
 
-    public boolean isStatusLixeira() {
-        return statusLixeira;
-    }
+    public void percepcao(Area visaoAtual[][]) {
 
-    public void setStatusLixeira(boolean statusLixeira) {
-        this.statusLixeira = statusLixeira;
-    }
+        if (energiaAtual <= energiaMinima) {
 
-    public ArrayList<Lixeira> getLocaisLixeiras() {
-        return locaisLixeiras;
-    }
-
-    public void setLocaisLixeiras(ArrayList<Lixeira> locaisLixeiras) {
-        this.locaisLixeiras = locaisLixeiras;
-    }
-
-    public ArrayList<Recarga> getLocaisPontosDeRecarga() {
-        return locaisPontosDeRecarga;
-    }
-
-    public void setLocaisPontosDeRecarga(ArrayList<Recarga> locaisPontosDeRecarga) {
-        this.locaisPontosDeRecarga = locaisPontosDeRecarga;
-    }
-
-    public int getCapacidadeLixeira() {
-        return capacidadeLixeira;
-    }
-
-    public void setCapacidadeLixeira(int capacidadeLixeira) {
-        this.capacidadeLixeira = capacidadeLixeira;
-    }
-
-    public int getEnergia() {
-        return energia;
-    }
-
-    public void setEnergia(int energia) {
-        this.energia = energia;
-    }
-
-    public int getEnergiaMinima() {
-        return energiaMinima;
-    }
-
-    public void setEnergiaMinima(int energiaMinima) {
-        this.energiaMinima = energiaMinima;
-    }
-
-    public ArrayList<Lixo> getLixeira() {
-        return lixeira;
-    }
-
-    
-    
-    
-   
-    public void percepcao(Area visaoAtual[][]){
-    
-        if(energia <=energiaMinima)
             carregar();
-        if (statusLixeira)
+        }
+        if (statusLixeira) {
             descarregarLixo();
-        
-        mover();
-        
-    
+        }
+
+        mover(visaoAtual);
+
     }
-    public void mover(){
-        energia--;
+
+    public boolean verificaSeHaLixoNaVisao(Area visaoAtual[][]) {
+        for (int i = 0; i < visaoAtual.length; i++) {
+            for (int j = 0; j < visaoAtual.length; j++) {
+                Area a = visaoAtual[i][j];
+                if (a.getItem() instanceof Lixo) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
-    public void carregar(){
-        energia++;
+
+    public void mover(Area visaoAtual[][]) {
+        energiaAtual--;
+        if (verificaSeHaLixoNaVisao(visaoAtual)) {
+            recolherLixo(visaoAtual);
+        }
     }
-    public void descarregarLixo(){
-        energia--;
+
+    public void recolherLixo(Area visaoAtual[][]) {
     }
-    
-    
-    
+
+    public void recolhendoLixo() {
+    }
+
+    public void carregar() {
+
+        carregando(new Recarga("me altere"));
+
+    }
+
+    public void carregando(Recarga recarga) {
+        while (energiaAtual < energiaMaxima) {
+            energiaAtual++;
+        }
+
+    }
+
+    public void descarregarLixo() {
+
+    }
+
+    public void descarregandoLixo(Lixeira lixeira, Lixo lixo) {
+        if (lixeira.getTipoDeArmazenagem() == lixo.getTipoDeLixo()) {
+            energiaAtual--;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "*";
+    }
+
 }

@@ -17,6 +17,7 @@ public class Mundo {
     private ArrayList<Area> locaisLixeiras;
     private ArrayList<Area> locaisDosLixos;
     private ArrayList<Area> locaisDasRecargas;
+    private ArrayList<Object> itemsASeremExecutados;
     private int tamanhoDoX;
     private int tamanhoDoY;
     private Area areaDoMundo[][];
@@ -179,7 +180,11 @@ public class Mundo {
         int criaQuandradoX2 = criaQuandradoX2(posicaoColetorX, tamanhoDaVisao);
         int criaQuandradoY1 = criaQuandradoY1(posicaoColetorY, tamanhoDaVisao);
         int criaQuandradoY2 = criaQuandradoY2(posicaoColetorY, tamanhoDaVisao);
-
+      
+        System.out.println("x"+posicaoColetorX + " y:"+posicaoColetorY);
+      
+        System.out.println("x1"+criaQuandradoX1 + " x2:"+criaQuandradoX2);
+        System.out.println("y1"+criaQuandradoY1 + " y2:"+criaQuandradoY2);
         int auxI = 0;
         for (int i = criaQuandradoX1; i <= criaQuandradoX2 ; i++) {
             int auxJ = 0;
@@ -231,4 +236,23 @@ public class Mundo {
 
         return posicao + tamanhoDaVisao;
     }
+    
+    private void executaOMunda(){
+        Object object = itemsASeremExecutados.get(0);
+        if (object instanceof Coletor){
+        
+        }
+        if (object instanceof Recarga){
+        
+        }
+        if (object instanceof Lixeira){
+        
+        }
+    }
+    
+   public void mudaUmaArea(int x, int y,Object novoObjeto){
+   Area a = areaDoMundo[x][y];
+        Object setItem = a.setItem(novoObjeto);
+        System.out.println(setItem);
+   }
 }

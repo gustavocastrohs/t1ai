@@ -41,8 +41,10 @@ public class Area {
         return item;
     }
 
-    public void setItem(Object item) {
+    public Object setItem(Object item) {
+        Object o = this.item;
         this.item = item;
+        return o;
     }
 
     public int getX() {

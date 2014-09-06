@@ -13,8 +13,7 @@ package padrao;
 public class Lixo {
     private TipoDeLixo tipoDeLixo;
     private String nome;
-    private int x;
-    private int y;
+
 
     public Lixo(TipoDeLixo tipoDeLixo, String nome) {
         this.tipoDeLixo = tipoDeLixo;
@@ -31,7 +30,7 @@ public class Lixo {
 
     @Override
     public String toString() {
-        return nome + " " + tipoDeLixo;
+        return nome + "" + tipoDeLixo;
     }
     
 }
