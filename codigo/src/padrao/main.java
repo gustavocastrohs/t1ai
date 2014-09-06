@@ -19,6 +19,8 @@ public class main {
         // TODO code application logic here
         Mundo m = new Mundo(10, 10,4,4);
         m.printaMundo();
+        Area[][] criaUmaVisao = m.criaUmaVisao(3, 4, 2);
+        m.printaVisao(criaUmaVisao,2);
     }
     
 }
