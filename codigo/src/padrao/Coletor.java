@@ -13,27 +13,29 @@ import java.util.ArrayList;
  */
 public class Coletor {
 
-    private ArrayList<Lixo> lixeiraDoColetor;
+    private ArrayList<Area> lixeiraDoColetor;
     private boolean statusLixeiraCheia;
-    private ArrayList<Lixeira> locaisLixeiras;
-    private ArrayList<Recarga> locaisPontosDeRecarga;
+    private ArrayList<Area> locaisLixeiras;
+    private ArrayList<Area> locaisPontosDeRecarga;
     private int capacidadeLixeira;
     private int energiaAtual;
     private int energiaMinima;
     private int energiaMaxima;
+    private int xAtual;
+    private int yAtual;
 
-    public Coletor(ArrayList<Lixeira> locaisLixeiras, ArrayList<Recarga> locaisPontosDeRecarga, int capacidadeLixeira, int energiaAtual, int energiaMinima, int energiaMaxima) {
+    public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeira, int energiaMinima, int energiaMaxima, int x, int y) {
+        this.lixeiraDoColetor = new ArrayList<>();
+        this.statusLixeiraCheia = false;
         this.locaisLixeiras = locaisLixeiras;
         this.locaisPontosDeRecarga = locaisPontosDeRecarga;
         this.capacidadeLixeira = capacidadeLixeira;
-        this.energiaAtual = energiaAtual;
+        this.energiaAtual = energiaMaxima;
         this.energiaMinima = energiaMinima;
         this.energiaMaxima = energiaMaxima;
-        this.statusLixeiraCheia = false;
-        this.lixeiraDoColetor = new ArrayList<>();
+        this.xAtual = x;
+        this.yAtual = y;
     }
-
-
 
     public Coletor() {
     }
@@ -66,10 +68,11 @@ public class Coletor {
     }
 
     public void mover(Area visaoAtual[][]) {
-        energiaAtual--;
+        //energiaAtual--;
         if (verificaSeHaLixoNaVisao(visaoAtual)) {
             recolherLixo(visaoAtual);
         }
+        calcularTrajetoria(visaoAtual, 3, 4);
     }
 
     public void recolherLixo(Area visaoAtual[][]) {
@@ -104,6 +107,60 @@ public class Coletor {
     @Override
     public String toString() {
         return "*";
+    }
+
+    public ArrayList<Area> calcularTrajetoria(Area visaoAtual[][], int xAlvo, int yAlvo) {
+
+        ArrayList<Area> caminhoPossivel = new ArrayList<>();
+
+        for (int y = 0; y < visaoAtual.length; y++) {
+            int trajeto = 0;
+            for (int x = 0; x < visaoAtual.length; x++) {
+                if (x == xAtual && y == yAtual) {
+                    continue;
+                }
+                Area a = visaoAtual[y][x];
+                if (a.getItem() instanceof Recarga || a.getItem() instanceof Lixeira) {
+                    //return null;
+                    trajeto++;
+                }
+
+                trajeto = trajeto + calculaTrajetoriaPasso1(xAlvo, x, yAlvo, y);
+                System.out.println(trajeto);
+            }
+        }
+
+        return null;
+    }
+
+    private int calculaTrajetoriaPasso1(int xAlvo, int xAtual, int yAlvo, int yAtual) {
+
+        int dx = xAlvo - xAtual;
+        int dy = yAlvo - yAtual;
+
+    //    heruistica = sqrt((dx*dx)+(dy*dy));
+        //    heruistica = dx+dy;
+        return dx + dy;
+    }
+
+    private void calculaTrajetoriaPasso2() {
+
+    }
+
+    public int getxAtual() {
+        return xAtual;
+    }
+
+    public void setxAtual(int xAtual) {
+        this.xAtual = xAtual;
+    }
+
+    public int getyAtual() {
+        return yAtual;
+    }
+
+    public void setyAtual(int yAtual) {
+        this.yAtual = yAtual;
     }
 
 }

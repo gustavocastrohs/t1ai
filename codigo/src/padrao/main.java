@@ -17,8 +17,11 @@ public class main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        Mundo m = new Mundo(10, 10,4,4);
+        Mundo m = new Mundo(10, 10,4,4,2);
+        m.criaUmColetor(3,4,30, 10, 30);
+        m.executaOMunda();
         //m.printaMundo();
+        /*
         m.mudaUmaAreaColetor(3, 4, new Coletor());
         
         m.printaMundo();
@@ -26,8 +29,10 @@ public class main {
          m.mudaUmaAreaColetor(3, 4, null);
          
         m.mudaUmaAreaColetor(4, 4, new Coletor());
+                */
+        
         m.printaMundo();
-        m.printaVisao(m.criaUmaVisao(4, 4, 2),2);
+        //m.printaVisao(m.criaUmaVisao(4, 4, 2),2);
         
         
     }
