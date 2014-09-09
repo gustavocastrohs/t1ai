@@ -18,11 +18,18 @@ public class main {
     public static void main(String[] args) {
         // TODO code application logic here
         Mundo m = new Mundo(10, 10,4,4);
+        //m.printaMundo();
+        m.mudaUmaAreaColetor(3, 4, new Coletor());
+        
         m.printaMundo();
-        m.mudaUmaArea(3, 4, new Coletor());
+        m.printaVisao(m.criaUmaVisao(3, 4, 2),2);
+         m.mudaUmaAreaColetor(3, 4, null);
+         
+        m.mudaUmaAreaColetor(4, 4, new Coletor());
         m.printaMundo();
-        Area[][] criaUmaVisao = m.criaUmaVisao(3, 4, 2);
-        m.printaVisao(criaUmaVisao,2);
+        m.printaVisao(m.criaUmaVisao(4, 4, 2),2);
+        
+        
     }
     
 }

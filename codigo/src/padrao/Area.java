@@ -12,6 +12,7 @@ package padrao;
 public class Area {
 
     private Object item;
+    private Coletor coletor;
     private int x;
     private int y;
 
@@ -27,13 +28,26 @@ public class Area {
         this.y = y;
     }
 
+    public Area(Coletor coletor, int x, int y) {
+        this.coletor = coletor;
+        this.x = x;
+        this.y = y;
+    }
+
     @Override
     public String toString() {
+        String saida = "";
         if (item != null) {
-              //  return item + ", x=" + x + ", y=" + y + '}';
-            return item.toString();
+            //  return item + ", x=" + x + ", y=" + y + '}';
+            saida = item.toString();
         }
         //return "Area{" + "lixo=" + lixo + ", recarga=" + recarga + ", x=" + x + ", y=" + y + '}';
+        if (coletor != null) {
+            saida = saida + " " + coletor.toString();
+        }
+        if (!saida.equalsIgnoreCase("")) {
+            return saida;
+        }
         return " - ";
     }
 
@@ -41,10 +55,8 @@ public class Area {
         return item;
     }
 
-    public Object setItem(Object item) {
-        Object o = this.item;
+    public void setItem(Object item) {
         this.item = item;
-        return o;
     }
 
     public int getX() {
@@ -61,6 +73,14 @@ public class Area {
 
     public void setY(int y) {
         this.y = y;
+    }
+
+    public Coletor getColetor() {
+        return coletor;
+    }
+
+    public void setColetor(Coletor coletor) {
+        this.coletor = coletor;
     }
 
 }

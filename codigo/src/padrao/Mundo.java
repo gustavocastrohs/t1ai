@@ -28,7 +28,7 @@ public class Mundo {
     public Mundo(int x, int y, int quantidadeDeLixoEsperada, int quantidadeDeRecargas) {
         tamanhoDoX = x;
         tamanhoDoY = y;
-        areaDoMundo = new Area[x][y];
+        areaDoMundo = new Area[y][x];
         locaisDosLixos = new ArrayList<>();
         locaisDasRecargas = new ArrayList<>();
         locaisLixeiras = new ArrayList<>();
@@ -56,9 +56,9 @@ public class Mundo {
     }
 
     private void inicializaMundo() {
-        for (int i = 0; i < tamanhoDoX; i++) {
-            for (int j = 0; j < tamanhoDoY; j++) {
-                areaDoMundo[i][j] = new Area(i, j);
+        for (int y = 0; y < tamanhoDoX; y++) {
+            for (int x = 0; x < tamanhoDoY; x++) {
+                areaDoMundo[y][x] = new Area(y, x);
             }
         }
     }
@@ -67,7 +67,7 @@ public class Mundo {
         Random gerador = new Random();
         int aleatorioX = gerador.nextInt(tamanhoDoX - 1);
         int aleatorioY = gerador.nextInt(tamanhoDoY - 1);
-        Area a = areaDoMundo[aleatorioX][aleatorioY];
+        Area a = areaDoMundo[aleatorioY][aleatorioX];
         if (a.getItem() == null) {
             a.setItem(criaLixo(quantidadeDeLixo + 1));
             locaisDosLixos.add(a);
@@ -83,7 +83,7 @@ public class Mundo {
         Random gerador = new Random();
         int aleatorioX = gerador.nextInt(tamanhoDoX - 1);
         int aleatorioY = gerador.nextInt(tamanhoDoY - 1);
-        Area a = areaDoMundo[aleatorioX][aleatorioY];
+        Area a = areaDoMundo[aleatorioY][aleatorioX];
         if (a.getItem() == null) {
             a.setItem(criaRecarga(quantidadeDeRecargas + 1));
             locaisDasRecargas.add(a);
@@ -99,7 +99,7 @@ public class Mundo {
         Random gerador = new Random();
         int aleatorioX = gerador.nextInt(tamanhoDoX - 1);
         int aleatorioY = gerador.nextInt(tamanhoDoY - 1);
-        Area a = areaDoMundo[aleatorioX][aleatorioY];
+        Area a = areaDoMundo[aleatorioY][aleatorioX];
         if (a.getItem() == null) {
             a.setItem(criaLixeira(quantidadeDeLixeiras + 1, tamanhoDoX, tipo));
             locaisLixeiras.add(a);
@@ -250,9 +250,14 @@ public class Mundo {
         }
     }
     
-   public void mudaUmaArea(int x, int y,Object novoObjeto){
-   Area a = areaDoMundo[x][y];
-        Object setItem = a.setItem(novoObjeto);
-        System.out.println(setItem);
+   public void mudaUmaAreaItem(int x, int y,Object novoObjeto){
+   Area a = areaDoMundo[y][x];
+      
+      a.setItem(novoObjeto);
+        
+   }
+   public void mudaUmaAreaColetor(int x, int y,Object novoObjeto){
+   Area a = areaDoMundo[y][x];
+   a.setColetor((Coletor) novoObjeto);
    }
 }

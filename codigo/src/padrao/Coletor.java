@@ -13,8 +13,8 @@ import java.util.ArrayList;
  */
 public class Coletor {
 
-    private ArrayList<Lixo> lixeira;
-    private boolean statusLixeira;
+    private ArrayList<Lixo> lixeiraDoColetor;
+    private boolean statusLixeiraCheia;
     private ArrayList<Lixeira> locaisLixeiras;
     private ArrayList<Recarga> locaisPontosDeRecarga;
     private int capacidadeLixeira;
@@ -22,14 +22,18 @@ public class Coletor {
     private int energiaMinima;
     private int energiaMaxima;
 
-    public Coletor(ArrayList<Lixeira> locaisLixeiras, int capacidadeLixeira, int energiaAtual, int energiaMaxima, int energiaMinima) {
+    public Coletor(ArrayList<Lixeira> locaisLixeiras, ArrayList<Recarga> locaisPontosDeRecarga, int capacidadeLixeira, int energiaAtual, int energiaMinima, int energiaMaxima) {
         this.locaisLixeiras = locaisLixeiras;
+        this.locaisPontosDeRecarga = locaisPontosDeRecarga;
         this.capacidadeLixeira = capacidadeLixeira;
         this.energiaAtual = energiaAtual;
-        this.energiaMaxima = energiaMaxima;
         this.energiaMinima = energiaMinima;
-
+        this.energiaMaxima = energiaMaxima;
+        this.statusLixeiraCheia = false;
+        this.lixeiraDoColetor = new ArrayList<>();
     }
+
+
 
     public Coletor() {
     }
@@ -40,7 +44,7 @@ public class Coletor {
 
             carregar();
         }
-        if (statusLixeira) {
+        if (statusLixeiraCheia) {
             descarregarLixo();
         }
 
