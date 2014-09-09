@@ -18,9 +18,17 @@ public class main {
     public static void main(String[] args) {
         // TODO code application logic here
         Mundo m = new Mundo(10, 10,4,4,2);
-        m.criaUmColetor(3,4,30, 10, 30);
+        m.criaUmColetor(6,1,30, 10, 30);
         m.executaOMunda();
-        //m.printaMundo();
+        m.executaOMunda();
+        m.executaOMunda();
+        m.executaOMunda();
+        m.executaOMunda();
+        m.executaOMunda();
+        m.executaOMunda();
+        m.executaOMunda();
+        m.executaOMunda();
+        
         /*
         m.mudaUmaAreaColetor(3, 4, new Coletor());
         

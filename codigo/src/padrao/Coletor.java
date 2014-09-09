@@ -5,6 +5,7 @@
  */
 package padrao;
 
+import static java.lang.Math.sqrt;
 import java.util.ArrayList;
 
 /**
@@ -23,6 +24,7 @@ public class Coletor {
     private int energiaMaxima;
     private int xAtual;
     private int yAtual;
+    
 
     public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeira, int energiaMinima, int energiaMaxima, int x, int y) {
         this.lixeiraDoColetor = new ArrayList<>();
@@ -57,9 +59,12 @@ public class Coletor {
     public boolean verificaSeHaLixoNaVisao(Area visaoAtual[][]) {
         for (int i = 0; i < visaoAtual.length; i++) {
             for (int j = 0; j < visaoAtual.length; j++) {
-                Area a = visaoAtual[i][j];
-                if (a.getItem() instanceof Lixo) {
-                    return true;
+                Object o = visaoAtual[i][j];
+                if (o != null) {
+                    Area a = (Area) o;
+                    if (a.getItem() instanceof Lixo) {
+                        return true;
+                    }
                 }
             }
         }
@@ -72,7 +77,12 @@ public class Coletor {
         if (verificaSeHaLixoNaVisao(visaoAtual)) {
             recolherLixo(visaoAtual);
         }
-        calcularTrajetoria(visaoAtual, 3, 4);
+        System.out.println("Minha posição:x: "+xAtual+ " / y: "+yAtual);
+        Area calcularTrajetoria = calcularTrajetoria(visaoAtual,locaisLixeiras.get(0).getX(),locaisLixeiras.get(0).getY());
+        System.out.println(locaisLixeiras.get(0));
+        xAtual = calcularTrajetoria.getX();
+        yAtual = calcularTrajetoria.getY();
+        //3,8
     }
 
     public void recolherLixo(Area visaoAtual[][]) {
@@ -109,37 +119,58 @@ public class Coletor {
         return "*";
     }
 
-    public ArrayList<Area> calcularTrajetoria(Area visaoAtual[][], int xAlvo, int yAlvo) {
+    public Area calcularTrajetoria(Area visaoAtual[][], int xAlvo, int yAlvo) {
 
-        ArrayList<Area> caminhoPossivel = new ArrayList<>();
-
+        
+        Area caminhoAtual = null;
+        double custo = 999;
+        if (xAlvo != xAtual || yAlvo != yAtual) {
+        
+        
         for (int y = 0; y < visaoAtual.length; y++) {
-            int trajeto = 0;
+            double trajeto = 0;
             for (int x = 0; x < visaoAtual.length; x++) {
                 if (x == xAtual && y == yAtual) {
                     continue;
                 }
-                Area a = visaoAtual[y][x];
-                if (a.getItem() instanceof Recarga || a.getItem() instanceof Lixeira) {
-                    //return null;
-                    trajeto++;
-                }
+                Object o = visaoAtual[y][x];
+                if (o != null) {
+                    Area a = (Area) o;
+                    if (a.getItem() instanceof Recarga || a.getItem() instanceof Lixeira) {
+                        //return null;
+                        trajeto++;
+                    }
 
-                trajeto = trajeto + calculaTrajetoriaPasso1(xAlvo, x, yAlvo, y);
-                System.out.println(trajeto);
+                    trajeto = trajeto + calculaTrajetoriaPasso1(xAlvo, a.getX(), yAlvo, a.getY());
+
+    //            System.out.println(trajeto);
+                    if (custo > trajeto) {
+                        custo = trajeto;
+                        caminhoAtual = a;
+
+                    }
+                }
             }
         }
-
-        return null;
+        System.out.println("Destino: "+xAlvo+":"+yAlvo);
+        System.out.println("Menor caminho possivel: "+caminhoAtual.getX()+":"+caminhoAtual.getY()+" custo "+custo);
+        }
+        else{
+            System.out.println("ja cheguei onde queria ir");
+            return null;
+        }
+    
+        return caminhoAtual;
     }
 
-    private int calculaTrajetoriaPasso1(int xAlvo, int xAtual, int yAlvo, int yAtual) {
+    private double calculaTrajetoriaPasso1(int xAlvo, int xAtual, int yAlvo, int yAtual) {
 
         int dx = xAlvo - xAtual;
         int dy = yAlvo - yAtual;
 
-    //    heruistica = sqrt((dx*dx)+(dy*dy));
+            //    heruistica = sqrt((dx*dx)+(dy*dy));
         //    heruistica = dx+dy;
+      //   return sqrt((dx*dx)+(dy*dy));
         return dx + dy;
     }
 
