@@ -24,7 +24,6 @@ public class Coletor {
     private int energiaMaxima;
     private int xAtual;
     private int yAtual;
-    
 
     public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeira, int energiaMinima, int energiaMaxima, int x, int y) {
         this.lixeiraDoColetor = new ArrayList<>();
@@ -44,15 +43,20 @@ public class Coletor {
 
     public void percepcao(Area visaoAtual[][]) {
 
-        if (energiaAtual <= energiaMinima) {
+        verificaSeTemEnergiaOBastante();
 
-            carregar();
-        }
+        
+           
         if (statusLixeiraCheia) {
-            descarregarLixo();
+            descarregarLixo(visaoAtual);
+            
         }
-
-        mover(visaoAtual);
+        
+        else{
+            mover(visaoAtual);
+        }
+            
+        
 
     }
 
@@ -73,19 +77,21 @@ public class Coletor {
     }
 
     public void mover(Area visaoAtual[][]) {
-        //energiaAtual--;
+        gastaEnergia();
         if (verificaSeHaLixoNaVisao(visaoAtual)) {
             recolherLixo(visaoAtual);
         }
-        System.out.println("Minha posição:x: "+xAtual+ " / y: "+yAtual);
-        Area calcularTrajetoria = calcularTrajetoria(visaoAtual,locaisLixeiras.get(0).getX(),locaisLixeiras.get(0).getY());
-        System.out.println(locaisLixeiras.get(0));
+        System.out.println("Minha posição:x: " + xAtual + " / y: " + yAtual);
+        Area calcularTrajetoria = calcularTrajetoria(visaoAtual, locaisLixeiras.get(0).getX() + 1, locaisLixeiras.get(0).getY() + 1);
+
+        System.out.println((locaisLixeiras.get(0).getX() + 1) + "/" + (locaisLixeiras.get(0).getY() + 1));
         xAtual = calcularTrajetoria.getX();
         yAtual = calcularTrajetoria.getY();
         //3,8
     }
 
     public void recolherLixo(Area visaoAtual[][]) {
+        gastaEnergia();
     }
 
     public void recolhendoLixo() {
@@ -104,13 +110,14 @@ public class Coletor {
 
     }
 
-    public void descarregarLixo() {
-
+    public void descarregarLixo(Area[][] visao) {
+        verificaSeTemEnergiaOBastante();
+        
     }
 
     public void descarregandoLixo(Lixeira lixeira, Lixo lixo) {
         if (lixeira.getTipoDeArmazenagem() == lixo.getTipoDeLixo()) {
-            energiaAtual--;
+            gastaEnergia();
         }
     }
 
@@ -121,45 +128,43 @@ public class Coletor {
 
     public Area calcularTrajetoria(Area visaoAtual[][], int xAlvo, int yAlvo) {
 
-        
         Area caminhoAtual = null;
         double custo = 999;
         if (xAlvo != xAtual || yAlvo != yAtual) {
-        
-        
-        for (int y = 0; y < visaoAtual.length; y++) {
-            double trajeto = 0;
+
             for (int x = 0; x < visaoAtual.length; x++) {
-                if (x == xAtual && y == yAtual) {
-                    continue;
-                }
-                Object o = visaoAtual[y][x];
-                if (o != null) {
-                    Area a = (Area) o;
-                    if (a.getItem() instanceof Recarga || a.getItem() instanceof Lixeira) {
-                        //return null;
-                        trajeto++;
+
+                double trajeto = 0;
+                for (int y = 0; y < visaoAtual.length; y++) {
+                    if (x == xAtual && y == yAtual) {
+                        continue;
                     }
+                    Object o = visaoAtual[x][y];
+                    if (o != null) {
+                        Area a = (Area) o;
+                        if (a.getItem() instanceof Recarga || a.getItem() instanceof Lixeira) {
+                            //return null;
+                            trajeto++;
+                        }
 
-                    trajeto = trajeto + calculaTrajetoriaPasso1(xAlvo, a.getX(), yAlvo, a.getY());
+                        trajeto = trajeto + calculaTrajetoriaPasso1(xAlvo, a.getX(), yAlvo, a.getY());
 
-    //            System.out.println(trajeto);
-                    if (custo > trajeto) {
-                        custo = trajeto;
-                        caminhoAtual = a;
+                        //            System.out.println(trajeto);
+                        if (custo > trajeto) {
+                            custo = trajeto;
+                            caminhoAtual = a;
 
+                        }
                     }
                 }
             }
-        }
-        System.out.println("Destino: "+xAlvo+":"+yAlvo);
-        System.out.println("Menor caminho possivel: "+caminhoAtual.getX()+":"+caminhoAtual.getY()+" custo "+custo);
-        }
-        else{
+            System.out.println("Destino: " + xAlvo + ":" + yAlvo);
+            System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
+        } else {
             System.out.println("ja cheguei onde queria ir");
             return null;
         }
-    
+
         return caminhoAtual;
     }
 
@@ -170,7 +175,7 @@ public class Coletor {
 
             //    heruistica = sqrt((dx*dx)+(dy*dy));
         //    heruistica = dx+dy;
-      //   return sqrt((dx*dx)+(dy*dy));
+        //   return sqrt((dx*dx)+(dy*dy));
         return dx + dy;
     }
 
@@ -194,4 +199,17 @@ public class Coletor {
         this.yAtual = yAtual;
     }
 
+    public void gastaEnergia() {
+        energiaAtual--;
+        verificaSeTemEnergiaOBastante();
+    }
+
+    public void verificaSeTemEnergiaOBastante() {
+        if (energiaAtual <= energiaMinima) {
+
+            carregar();
+            
+        }
+        
+    }
 }

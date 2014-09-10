@@ -26,7 +26,7 @@ public class Mundo {
     private int quantidadeDeLixeiras;
     private int tamanhoVisaoDoColetor;
 
-    public Mundo(int x, int y, int quantidadeDeLixoEsperada, int quantidadeDeRecargas,int tamanhoVisaoDoColetor) {
+    public Mundo(int x, int y, int quantidadeDeLixoEsperada, int quantidadeDeRecargas, int tamanhoVisaoDoColetor) {
         tamanhoDoX = x;
         tamanhoDoY = y;
         this.tamanhoVisaoDoColetor = tamanhoVisaoDoColetor;
@@ -34,7 +34,7 @@ public class Mundo {
         locaisDosLixos = new ArrayList<>();
         locaisDasRecargas = new ArrayList<>();
         locaisLixeiras = new ArrayList<>();
-        itemsASeremExecutados= new ArrayList<>();
+        itemsASeremExecutados = new ArrayList<>();
         inicializaMundo();
         quantidadeDeLixo = 0;
         quantidadeDeLixeiras = 0;
@@ -128,11 +128,11 @@ public class Mundo {
 
         System.out.println("printando a visao");
         int inicializaVisao = tamanhoVisaoDoColetor * 2 + 1;
-        for (int j = 0; j < inicializaVisao; j++) {
+        for (int i = 0; i < inicializaVisao; i++) {
             System.out.println("");
-            for (int i = 0; i < inicializaVisao; i++) {
-
-                System.out.print(criaUmaVisao[j][i]);
+            
+                for (int j = 0; j < inicializaVisao; j++) {
+                System.out.print(criaUmaVisao[i][j]);
             }
         }
         System.out.println("\n");
@@ -181,20 +181,19 @@ public class Mundo {
         int criaQuandradoX2 = criaQuandradoX2(posicaoColetorX, tamanhoVisaoDoColetor);
         int criaQuandradoY1 = criaQuandradoY1(posicaoColetorY, tamanhoVisaoDoColetor);
         int criaQuandradoY2 = criaQuandradoY2(posicaoColetorY, tamanhoVisaoDoColetor);
-     
-//        System.out.println("Posição do coletor");
-//        System.out.println("x" + posicaoColetorX + " y:" + posicaoColetorY);
-//        System.out.println("Visão do coletor");
-//        System.out.println("x1" + criaQuandradoX1 + " x2:" + criaQuandradoX2);
-//        System.out.println("y1" + criaQuandradoY1 + " y2:" + criaQuandradoY2);
-//        
+
+        System.out.println("Posição do coletor");
+        System.out.println("x" + posicaoColetorX + " y:" + posicaoColetorY);
+        System.out.println("Visão do coletor");
+        System.out.println("x1: " + criaQuandradoX1 + " x2:" + criaQuandradoX2);
+        System.out.println("y1: " + criaQuandradoY1 + " y2:" + criaQuandradoY2);
         
         int auxI = 0;
-        for (int y = criaQuandradoY1; y <= criaQuandradoY2; y++) {
-            int auxJ = 0;
 
-            for (int x = criaQuandradoX1; x <= criaQuandradoX2; x++) {
-                Area a = areaDoMundo[y][x];
+        for (int x = criaQuandradoX1; x <= criaQuandradoX2 ; x++) {
+            int auxJ = 0;
+            for (int y = criaQuandradoY1; y <= criaQuandradoY2 ; y++) {    
+                Area a = areaDoMundo[x][y];
                 visao[auxI][auxJ] = a;
                 auxJ++;
             }
@@ -216,7 +215,7 @@ public class Mundo {
     private int criaQuandradoX2(int posicao, int tamanhoDaVisao) {
 
         if (posicao + tamanhoDaVisao >= tamanhoDoX) {
-            return tamanhoDoX;
+            return tamanhoDoX-1;
         }
 
         return posicao + tamanhoDaVisao;
@@ -234,7 +233,7 @@ public class Mundo {
     private int criaQuandradoY2(int posicao, int tamanhoDaVisao) {
 
         if (posicao + tamanhoDaVisao >= tamanhoDoY) {
-            return tamanhoDoY;
+            return tamanhoDoY-1;
         }
 
         return posicao + tamanhoDaVisao;
@@ -242,20 +241,22 @@ public class Mundo {
 
     public void executaOMunda() {
         Object object = itemsASeremExecutados.remove(0);
-        
+
         if (object instanceof Coletor) {
             Coletor c = (Coletor) object;
-            mudaUmaAreaColetor( c.getyAtual(),c.getxAtual(), c);
+            mudaUmaAreaColetor( c.getxAtual(),c.getyAtual(), c);
             Area[][] criaUmaVisao = criaUmaVisao(c.getxAtual(), c.getyAtual());
             int xAntigo = c.getxAtual();
             int yAntigo = c.getyAtual();
 
-            printaMundo();
+            
             printaVisao(criaUmaVisao);
+            printaMundo();
             c.percepcao(criaUmaVisao);
             mudaUmaAreaColetor(xAntigo, yAntigo, null);
             mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
-             
+            printaMundo();
+
         }
         if (object instanceof Recarga) {
 
@@ -268,28 +269,28 @@ public class Mundo {
     }
 
     public void mudaUmaAreaItem(int x, int y, Object novoObjeto) {
-        Area a = areaDoMundo[y][x];
+        Area a = areaDoMundo[x][y];
 
         a.setItem(novoObjeto);
 
     }
 
     public boolean mudaUmaAreaColetor(int x, int y, Object novoObjeto) {
-       
-        Area a = areaDoMundo[y][x];
+
+        Area a = areaDoMundo[x][y];
         if (a.getColetor() == null) {
             a.setColetor((Coletor) novoObjeto);
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
-    public void criaUmColetor(int x,int y,int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
-        Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas,capacidadeLixeira, energiaMinima, energiaMaxima,x,y);
-        Area area = areaDoMundo[y][x];
+    public void criaUmColetor(int x, int y, int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
+        Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y);
+        Area area = areaDoMundo[x][y];
         area.setColetor(coletor);
         itemsASeremExecutados.add(coletor);
-        
 
     }
 }

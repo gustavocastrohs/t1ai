@@ -22,12 +22,12 @@ public class main {
         m.executaOMunda();
         m.executaOMunda();
         m.executaOMunda();
-        m.executaOMunda();
-        m.executaOMunda();
-        m.executaOMunda();
-        m.executaOMunda();
-        m.executaOMunda();
-        m.executaOMunda();
+//        m.executaOMunda();
+//        m.executaOMunda();
+//        m.executaOMunda();
+//        m.executaOMunda();
+//        m.executaOMunda();
+//        m.executaOMunda();
         
         /*
         m.mudaUmaAreaColetor(3, 4, new Coletor());
