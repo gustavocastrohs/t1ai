@@ -76,7 +76,7 @@ public class Coletor {
             recolherLixo(visaoAtual);
         }
         System.out.println("Minha posição:x: " + xAtual + " / y: " + yAtual);
-        Area calcularTrajetoria = calcularTrajetoria(visaoAtual, locaisLixeiras.get(0).getX()+1, locaisLixeiras.get(0).getY() + 1);
+        Area calcularTrajetoria = calcularTrajetoria(visaoAtual, locaisLixeiras.get(0).getX() + 1, locaisLixeiras.get(0).getY() + 1);
 
         //System.out.println((locaisLixeiras.get(0).getX() + 1) + "/" + (locaisLixeiras.get(0).getY() + 1));
         xAtual = calcularTrajetoria.getX();
@@ -129,26 +129,25 @@ public class Coletor {
             for (int y = 0; y < visaoAtual.length; y++) {
                 double trajeto = 0;
                 for (int x = 0; x < visaoAtual.length; x++) {
-
-                    if (x == xAtual && y == yAtual) {
-                        continue;
-                    }
                     Object o = visaoAtual[x][y];
                     if (o != null) {
                         Area a = (Area) o;
-                        if (a.getItem() instanceof Recarga || a.getItem() instanceof Lixeira) {
-                            //return null;
-                            trajeto++;
+
+                        if (a.getX() == xAtual && a.getY() == yAtual) {
+                            continue;
                         }
 
-                        trajeto = trajeto + calculaTrajetoriaPasso1(xAlvo, a.getX(), yAlvo, a.getY());
-                        if (trajeto < 0) {
-                            System.out.println(trajeto);
-                        }
-                        if (custo > trajeto) {
-                            custo = trajeto;
-                            caminhoAtual = a;
+                        if (oCaminhoPodeSerUsado(a)) {
+                            //trajeto = trajeto + calculaTrajetoriaPasso1a(xAlvo, yAlvo);
+                            trajeto = trajeto + calculaTrajetoriaPasso1b(xAlvo, a.getX(), yAlvo, a.getY());
+                            if (trajeto < 0) {
+                                System.out.println(trajeto);
+                            }
+                            if (custo > trajeto && custo >= 0) {
+                                custo = trajeto;
+                                caminhoAtual = a;
 
+                            }
                         }
                     }
                 }
@@ -163,17 +162,23 @@ public class Coletor {
         return caminhoAtual;
     }
 
-    private double calculaTrajetoriaPasso1(int xAlvo, int xAtual, int yAlvo, int yAtual) {
+    private boolean oCaminhoPodeSerUsado(Area areaTeste) {
+        if (areaTeste.getItem() instanceof Recarga || areaTeste.getItem() instanceof Lixeira) {
+            return false;
+        }
+        return true;
+    }
 
-        int dx = Math.abs(xAlvo - xAtual);
-        int dy = Math.abs(yAlvo - yAtual);
+    private double calculaTrajetoriaPasso1a(int xAlvo, int yAlvo) {
+        int dx = xAlvo - xAtual;
+        int dy = yAlvo - yAtual;
+        return sqrt((dx * dx) + (dy * dy));
+    }
 
-        //    heruistica = sqrt((dx*dx)+(dy*dy));
-        //    heruistica = dx+dy;
-        //   return sqrt((dx*dx)+(dy*dy));
-//Manhattan
-
-        return dx + dy;
+    private double calculaTrajetoriaPasso1b(int xAlvo, int xArea, int yAlvo, int yArea) {
+        int dx = xAlvo - xArea;
+        int dy = yAlvo - yArea;
+        return sqrt((dx * dx) + (dy * dy));
     }
 
     private void calculaTrajetoriaPasso2() {
