@@ -249,9 +249,9 @@ public class Mundo {
             int xAntigo = c.getxAtual();
             int yAntigo = c.getyAtual();
 
-            
-            printaVisao(criaUmaVisao);
             printaMundo();
+            printaVisao(criaUmaVisao);
+            //printaMundo();
             c.percepcao(criaUmaVisao);
             mudaUmaAreaColetor(xAntigo, yAntigo, null);
             mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
@@ -281,9 +281,13 @@ public class Mundo {
         if (a.getColetor() == null) {
             a.setColetor((Coletor) novoObjeto);
             return true;
-        } else {
-            return false;
         }
+        if (a.getColetor() != null && novoObjeto == null) {
+            a.setColetor(null);
+        }
+
+        return false;
+
     }
 
     public void criaUmColetor(int x, int y, int capacidadeLixeira, int energiaMinima, int energiaMaxima) {

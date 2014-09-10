@@ -45,18 +45,12 @@ public class Coletor {
 
         verificaSeTemEnergiaOBastante();
 
-        
-           
         if (statusLixeiraCheia) {
             descarregarLixo(visaoAtual);
-            
-        }
-        
-        else{
+
+        } else {
             mover(visaoAtual);
         }
-            
-        
 
     }
 
@@ -82,9 +76,9 @@ public class Coletor {
             recolherLixo(visaoAtual);
         }
         System.out.println("Minha posição:x: " + xAtual + " / y: " + yAtual);
-        Area calcularTrajetoria = calcularTrajetoria(visaoAtual, locaisLixeiras.get(0).getX() + 1, locaisLixeiras.get(0).getY() + 1);
+        Area calcularTrajetoria = calcularTrajetoria(visaoAtual, locaisLixeiras.get(0).getX()+1, locaisLixeiras.get(0).getY() + 1);
 
-        System.out.println((locaisLixeiras.get(0).getX() + 1) + "/" + (locaisLixeiras.get(0).getY() + 1));
+        //System.out.println((locaisLixeiras.get(0).getX() + 1) + "/" + (locaisLixeiras.get(0).getY() + 1));
         xAtual = calcularTrajetoria.getX();
         yAtual = calcularTrajetoria.getY();
         //3,8
@@ -112,7 +106,7 @@ public class Coletor {
 
     public void descarregarLixo(Area[][] visao) {
         verificaSeTemEnergiaOBastante();
-        
+
     }
 
     public void descarregandoLixo(Lixeira lixeira, Lixo lixo) {
@@ -132,10 +126,10 @@ public class Coletor {
         double custo = 999;
         if (xAlvo != xAtual || yAlvo != yAtual) {
 
-            for (int x = 0; x < visaoAtual.length; x++) {
-
+            for (int y = 0; y < visaoAtual.length; y++) {
                 double trajeto = 0;
-                for (int y = 0; y < visaoAtual.length; y++) {
+                for (int x = 0; x < visaoAtual.length; x++) {
+
                     if (x == xAtual && y == yAtual) {
                         continue;
                     }
@@ -148,8 +142,9 @@ public class Coletor {
                         }
 
                         trajeto = trajeto + calculaTrajetoriaPasso1(xAlvo, a.getX(), yAlvo, a.getY());
-
-                        //            System.out.println(trajeto);
+                        if (trajeto < 0) {
+                            System.out.println(trajeto);
+                        }
                         if (custo > trajeto) {
                             custo = trajeto;
                             caminhoAtual = a;
@@ -170,12 +165,14 @@ public class Coletor {
 
     private double calculaTrajetoriaPasso1(int xAlvo, int xAtual, int yAlvo, int yAtual) {
 
-        int dx = xAlvo - xAtual;
-        int dy = yAlvo - yAtual;
+        int dx = Math.abs(xAlvo - xAtual);
+        int dy = Math.abs(yAlvo - yAtual);
 
-            //    heruistica = sqrt((dx*dx)+(dy*dy));
+        //    heruistica = sqrt((dx*dx)+(dy*dy));
         //    heruistica = dx+dy;
         //   return sqrt((dx*dx)+(dy*dy));
+//Manhattan
+
         return dx + dy;
     }
 
@@ -208,8 +205,8 @@ public class Coletor {
         if (energiaAtual <= energiaMinima) {
 
             carregar();
-            
+
         }
-        
+
     }
 }
