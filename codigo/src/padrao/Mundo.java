@@ -240,8 +240,9 @@ public class Mundo {
     }
 
     public void executaOMunda() {
+       
         Object object = itemsASeremExecutados.remove(0);
-
+while (true){
         if (object instanceof Coletor) {
             Coletor c = (Coletor) object;
             mudaUmaAreaColetor( c.getxAtual(),c.getyAtual(), c);
@@ -256,6 +257,9 @@ public class Mundo {
             mudaUmaAreaColetor(xAntigo, yAntigo, null);
             mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
             printaMundo();
+            if (c.getEnergiaAtual() <= c.getEnergiaMinima()-10){
+                break;
+            }
 
         }
         if (object instanceof Recarga) {
@@ -266,6 +270,7 @@ public class Mundo {
         }
 
         itemsASeremExecutados.add(object);
+    }
     }
 
     public void mudaUmaAreaItem(int x, int y, Object novoObjeto) {

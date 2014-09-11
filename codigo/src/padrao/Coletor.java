@@ -72,6 +72,7 @@ public class Coletor {
 
     public void mover(Area visaoAtual[][]) {
         gastaEnergia();
+        System.out.println("minha energia atual é: "+energiaAtual);
         if (verificaSeHaLixoNaVisao(visaoAtual)) {
             recolherLixo(visaoAtual);
         }
@@ -98,10 +99,11 @@ public class Coletor {
     }
 
     public void carregando(Recarga recarga) {
-        while (energiaAtual < energiaMaxima) {
+     /*   while (energiaAtual < energiaMaxima) {
             energiaAtual++;
         }
-
+*/
+        
     }
 
     public void descarregarLixo(Area[][] visao) {
@@ -214,4 +216,19 @@ public class Coletor {
         }
 
     }
+
+    public int getCapacidadeLixeira() {
+        return capacidadeLixeira;
+    }
+
+    public int getEnergiaAtual() {
+        return energiaAtual;
+    }
+
+    public int getEnergiaMinima() {
+        return energiaMinima;
+    }
+    
+    
+    
 }
