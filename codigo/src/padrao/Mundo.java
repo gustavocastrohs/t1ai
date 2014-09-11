@@ -298,7 +298,14 @@ while (true){
     public void criaUmColetor(int x, int y, int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
         Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y);
         Area area = areaDoMundo[x][y];
-        area.setColetor(coletor);
+        if (area.getColetor()==null && (area.getItem() ==null))
+            area.setColetor(coletor);
+        else{
+            Random gerador = new Random();
+            int aleatorioX = gerador.nextInt(tamanhoDoX - 1);
+            int aleatorioY = gerador.nextInt(tamanhoDoY - 1);
+            criaUmColetor(aleatorioX, aleatorioY, capacidadeLixeira, energiaMinima, energiaMaxima);
+        }
         itemsASeremExecutados.add(coletor);
 
     }

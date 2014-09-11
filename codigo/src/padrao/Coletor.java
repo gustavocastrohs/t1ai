@@ -24,6 +24,7 @@ public class Coletor {
     private int energiaMaxima;
     private int xAtual;
     private int yAtual;
+    private int lixeirasVisitadas = 0;
 
     public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeira, int energiaMinima, int energiaMaxima, int x, int y) {
         this.lixeiraDoColetor = new ArrayList<>();
@@ -70,24 +71,74 @@ public class Coletor {
         return false;
     }
 
-    public void mover(Area visaoAtual[][]) {
+    public int moverParaUmAlvo(Area visaoAtual[][], Object alvo) {
+        AreaCusto calcularTrajetoria = null;
+        Area areaTemporaria = null;
+        /**
+         * 1 - move-se para um lixo 2 - move-se para um alvo
+         */
         gastaEnergia();
         System.out.println("minha energia atual é: " + energiaAtual);
         if (verificaSeHaLixoNaVisao(visaoAtual)) {
             recolherLixo(visaoAtual);
+            return 1;
         }
         System.out.println("Minha posição:x: " + xAtual + " / y: " + yAtual);
-        Area calcularTrajetoria = calcularTrajetoria(visaoAtual, locaisLixeiras.get(0).getX(), locaisLixeiras.get(0).getY(), locaisLixeiras.get(0));
+        if (alvo instanceof Lixeira) {
 
-        //System.out.println((locaisLixeiras.get(0).getX() + 1) + "/" + (locaisLixeiras.get(0).getY() + 1));
-        if (!calcularTrajetoria.isCaminhoEscolhido()) {
-            xAtual = calcularTrajetoria.getX();
-            yAtual = calcularTrajetoria.getY();
+            for (int i = 0; i < locaisLixeiras.size(); i++) {
+                areaTemporaria = locaisLixeiras.get(i);
+                /**
+                 * lixeirasVisitadas 1 = metal; 2 = papel; 3 = plastico; 4 =
+                 * vidro;
+                 */
+                Lixeira l = (Lixeira) areaTemporaria.getItem();
+                if (l.getTipoDeArmazenagem() == TipoDeLixo.metal && lixeirasVisitadas == 1 && statusLixeiraCheia) {
+                    alvo = l;
+
+                }
+                if (l.getTipoDeArmazenagem() == TipoDeLixo.papel && lixeirasVisitadas == 2 && statusLixeiraCheia) {
+                    alvo = l;
+
+                }
+                if (l.getTipoDeArmazenagem() == TipoDeLixo.plastico && lixeirasVisitadas == 3 && statusLixeiraCheia) {
+                    alvo = l;
+
+                }
+                if (l.getTipoDeArmazenagem() == TipoDeLixo.vidro && lixeirasVisitadas == 4 && statusLixeiraCheia) {
+                    alvo = l;
+
+                }
+
+            }
+
+            calcularTrajetoria = calcularTrajetoria(visaoAtual, areaTemporaria.getX(), areaTemporaria.getY(), alvo);
+            if (!calcularTrajetoria.getArea().isCaminhoEscolhido()) {
+                xAtual = calcularTrajetoria.getArea().getX();
+                yAtual = calcularTrajetoria.getArea().getY();
+                if (calcularTrajetoria.getCusto() <= 1 && calcularTrajetoria.getCusto() > 0) {
+                    lixeirasVisitadas++;
+                }
+                if (lixeirasVisitadas > 4) {
+                    lixeirasVisitadas = 1;
+                    if (lixeiraDoColetor.size() > capacidadeLixeira) {
+                        statusLixeiraCheia = false;
+                    }
+                }
+                return 1;
+            }
         }
+        //System.out.println((locaisLixeiras.get(0).getX() + 1) + "/" + (locaisLixeiras.get(0).getY() + 1));
+        if (!calcularTrajetoria.getArea().isCaminhoEscolhido()) {
+            xAtual = calcularTrajetoria.getArea().getX();
+            yAtual = calcularTrajetoria.getArea().getY();
+            return 1;
+        }
+        return 0;
         //3,8
     }
 
-    public void mover2(Area visaoAtual[][]) {
+    public void mover(Area visaoAtual[][]) {
         gastaEnergia();
         System.out.println("minha energia atual é: " + energiaAtual);
         if (verificaSeHaLixoNaVisao(visaoAtual)) {
@@ -147,7 +198,7 @@ public class Coletor {
         return "*";
     }
 
-    public Area calcularTrajetoria(Area visaoAtual[][], int xAlvo, int yAlvo, Object itemASerPesquisado) {
+    public AreaCusto calcularTrajetoria(Area visaoAtual[][], int xAlvo, int yAlvo, Object itemASerPesquisado) {
 
         Area caminhoAtual = null;
         double custo = 999;
@@ -180,7 +231,8 @@ public class Coletor {
                                     System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
                                     System.out.println("Estou circulando meu de destino ");
                                     caminhoAtual.setCaminhoEscolhido(true);
-                                    return caminhoAtual;
+
+                                    return new AreaCusto(caminhoAtual, custo);
                                 }
                             } else {
                                 if ((custo <= 1 && custo > 0) && (Math.abs(xAlvo - a.getX()) == 1) && (Math.abs(yAlvo - a.getY()) == 1)) {
@@ -188,7 +240,7 @@ public class Coletor {
                                     System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
                                     System.out.println("Estou circulando meu de destino ");
                                     caminhoAtual.setCaminhoEscolhido(true);
-                                    return caminhoAtual;
+                                    return new AreaCusto(caminhoAtual, custo);
                                 }
 
                             }
@@ -203,7 +255,7 @@ public class Coletor {
             return null;
         }
 
-        return caminhoAtual;
+        return new AreaCusto(caminhoAtual, custo);
     }
 
     private boolean oCaminhoPodeSerUsado(Area areaTeste) {
