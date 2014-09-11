@@ -15,6 +15,7 @@ public class Area {
     private Coletor coletor;
     private int x;
     private int y;
+    private boolean caminhoEscolhido=false;
 
     public Area(int x, int y) {
         this.x = x;
@@ -81,6 +82,14 @@ public class Area {
 
     public void setColetor(Coletor coletor) {
         this.coletor = coletor;
+    }
+
+    public boolean isCaminhoEscolhido() {
+        return caminhoEscolhido;
+    }
+
+    public void setCaminhoEscolhido(boolean caminhoEscolhido) {
+        this.caminhoEscolhido = caminhoEscolhido;
     }
 
 }

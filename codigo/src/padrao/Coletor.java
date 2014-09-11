@@ -72,17 +72,42 @@ public class Coletor {
 
     public void mover(Area visaoAtual[][]) {
         gastaEnergia();
-        System.out.println("minha energia atual é: "+energiaAtual);
+        System.out.println("minha energia atual é: " + energiaAtual);
         if (verificaSeHaLixoNaVisao(visaoAtual)) {
             recolherLixo(visaoAtual);
         }
         System.out.println("Minha posição:x: " + xAtual + " / y: " + yAtual);
-        Area calcularTrajetoria = calcularTrajetoria(visaoAtual, locaisLixeiras.get(0).getX() + 1, locaisLixeiras.get(0).getY() + 1);
+        Area calcularTrajetoria = calcularTrajetoria(visaoAtual, locaisLixeiras.get(0).getX(), locaisLixeiras.get(0).getY(), locaisLixeiras.get(0));
 
         //System.out.println((locaisLixeiras.get(0).getX() + 1) + "/" + (locaisLixeiras.get(0).getY() + 1));
-        xAtual = calcularTrajetoria.getX();
-        yAtual = calcularTrajetoria.getY();
+        if (!calcularTrajetoria.isCaminhoEscolhido()) {
+            xAtual = calcularTrajetoria.getX();
+            yAtual = calcularTrajetoria.getY();
+        }
         //3,8
+    }
+
+    public void mover2(Area visaoAtual[][]) {
+        gastaEnergia();
+        System.out.println("minha energia atual é: " + energiaAtual);
+        if (verificaSeHaLixoNaVisao(visaoAtual)) {
+            recolherLixo(visaoAtual);
+        }
+
+        for (int y = 0; y < visaoAtual.length; y++) {
+
+            for (int x = 0; x < visaoAtual.length; x++) {
+                Object o = visaoAtual[x][y];
+                if (o != null) {
+                    Area a = (Area) o;
+
+                }
+            }
+        }
+    }
+
+    private void desviar() {
+
     }
 
     public void recolherLixo(Area visaoAtual[][]) {
@@ -99,11 +124,11 @@ public class Coletor {
     }
 
     public void carregando(Recarga recarga) {
-     /*   while (energiaAtual < energiaMaxima) {
-            energiaAtual++;
-        }
-*/
-        
+        /*   while (energiaAtual < energiaMaxima) {
+         energiaAtual++;
+         }
+         */
+
     }
 
     public void descarregarLixo(Area[][] visao) {
@@ -122,15 +147,16 @@ public class Coletor {
         return "*";
     }
 
-    public Area calcularTrajetoria(Area visaoAtual[][], int xAlvo, int yAlvo) {
+    public Area calcularTrajetoria(Area visaoAtual[][], int xAlvo, int yAlvo, Object itemASerPesquisado) {
 
         Area caminhoAtual = null;
         double custo = 999;
         if (xAlvo != xAtual || yAlvo != yAtual) {
 
-            for (int y = 0; y < visaoAtual.length; y++) {
+            for (int x = 0; x < visaoAtual.length; x++) {
                 double trajeto = 0;
-                for (int x = 0; x < visaoAtual.length; x++) {
+                for (int y = 0; y < visaoAtual.length; y++) {
+
                     Object o = visaoAtual[x][y];
                     if (o != null) {
                         Area a = (Area) o;
@@ -140,14 +166,30 @@ public class Coletor {
                         }
 
                         if (oCaminhoPodeSerUsado(a)) {
-                            //trajeto = trajeto + calculaTrajetoriaPasso1a(xAlvo, yAlvo);
-                            trajeto = trajeto + calculaTrajetoriaPasso1b(xAlvo, a.getX(), yAlvo, a.getY());
-                            if (trajeto < 0) {
-                                System.out.println(trajeto);
-                            }
+                            trajeto = trajeto + calculaTrajetoriaPasso1a(xAlvo, a.getX(), yAlvo, a.getY());
+                            //trajeto = trajeto + calculaTrajetoriaPasso1b(xAlvo, a.getX(), yAlvo, a.getY());
+
                             if (custo > trajeto && custo >= 0) {
                                 custo = trajeto;
                                 caminhoAtual = a;
+
+                            }
+                            if (itemASerPesquisado instanceof Lixeira || itemASerPesquisado instanceof Recarga) {
+                                if ((custo <= 1 && custo > 0) && (Math.abs(xAlvo - a.getX()) == 1) && (Math.abs(yAlvo - a.getY()) == 1)) {
+                                    System.out.println("Destino: " + xAlvo + ":" + yAlvo);
+                                    System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
+                                    System.out.println("Estou circulando meu de destino ");
+                                    caminhoAtual.setCaminhoEscolhido(true);
+                                    return caminhoAtual;
+                                }
+                            } else {
+                                if ((custo <= 1 && custo > 0) && (Math.abs(xAlvo - a.getX()) == 1) && (Math.abs(yAlvo - a.getY()) == 1)) {
+                                    System.out.println("Destino: " + xAlvo + ":" + yAlvo);
+                                    System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
+                                    System.out.println("Estou circulando meu de destino ");
+                                    caminhoAtual.setCaminhoEscolhido(true);
+                                    return caminhoAtual;
+                                }
 
                             }
                         }
@@ -171,20 +213,20 @@ public class Coletor {
         return true;
     }
 
-    private double calculaTrajetoriaPasso1a(int xAlvo, int yAlvo) {
-        int dx = xAlvo - xAtual;
-        int dy = yAlvo - yAtual;
-        return sqrt((dx * dx) + (dy * dy));
-    }
-
-    private double calculaTrajetoriaPasso1b(int xAlvo, int xArea, int yAlvo, int yArea) {
+    private double calculaTrajetoriaPasso1a(int xAlvo, int xArea, int yAlvo, int yArea) {
+        //Heuristica Euclidiana
+        //mais precisa e mais rapida já que podemos andar em diagonal
         int dx = xAlvo - xArea;
         int dy = yAlvo - yArea;
         return sqrt((dx * dx) + (dy * dy));
     }
 
-    private void calculaTrajetoriaPasso2() {
+    private double calculaTrajetoriaPasso1b(int xAlvo, int xArea, int yAlvo, int yArea) {
+        //Heuristica Manhattan
 
+        int dx = xAlvo - xArea;
+        int dy = yAlvo - yArea;
+        return sqrt((dx * dx) + (dy * dy));
     }
 
     public int getxAtual() {
@@ -228,7 +270,5 @@ public class Coletor {
     public int getEnergiaMinima() {
         return energiaMinima;
     }
-    
-    
-    
+
 }
