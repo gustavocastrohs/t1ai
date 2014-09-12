@@ -14,7 +14,7 @@ import java.util.ArrayList;
  */
 public class Coletor {
 
-    private ArrayList<Area> lixeiraDoColetor;
+    private ArrayList<Lixo> lixeiraDoColetor;
     private boolean statusLixeiraCheia;
     private ArrayList<Area> locaisLixeiras;
     private ArrayList<Area> locaisPontosDeRecarga;
@@ -25,6 +25,12 @@ public class Coletor {
     private int xAtual;
     private int yAtual;
     private int lixeirasVisitadas = 0;
+    private TipoDeLixo tipoDeLixeiraASerBuscada;
+    /**
+     * sentidoDoMovimento = true frente
+     * sentidoDoMovimento = false retorno
+     */
+    private boolean  sentidoDoMovimento;
 
     public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeira, int energiaMinima, int energiaMaxima, int x, int y) {
         this.lixeiraDoColetor = new ArrayList<>();
@@ -37,22 +43,38 @@ public class Coletor {
         this.energiaMaxima = energiaMaxima;
         this.xAtual = x;
         this.yAtual = y;
+        this.sentidoDoMovimento = true;
     }
 
     public Coletor() {
     }
 
-    public void percepcao(Area visaoAtual[][]) {
+    public int percepcao(Area visaoAtual[][]) {
 
-        verificaSeTemEnergiaOBastante();
+        gastaEnergia();
+        System.out.println("minha energia atual é: " + energiaAtual);
+        System.out.println("Quantidade de itens na lixeira " + lixeiraDoColetor.size());
+        if (verificaSeTemEnergiaOBastante()) {
 
-        if (statusLixeiraCheia) {
-            descarregarLixo(visaoAtual);
+            if (statusLixeiraCheia) {
+                descarregarLixo(visaoAtual);
+                return 0;
+            } else {
 
+                if (verificaSeHaLixoNaVisao(visaoAtual)) {
+                    recolherLixo(visaoAtual);
+                    return 0;
+                }
+
+                mover(visaoAtual);
+
+            }
+            return 0;
         } else {
-            mover(visaoAtual);
-        }
+            recarregar(visaoAtual);
 
+        }
+        return 0;
     }
 
     public boolean verificaSeHaLixoNaVisao(Area visaoAtual[][]) {
@@ -77,7 +99,7 @@ public class Coletor {
         /**
          * 1 - move-se para um lixo 2 - move-se para um alvo
          */
-        gastaEnergia();
+
         System.out.println("minha energia atual é: " + energiaAtual);
         if (verificaSeHaLixoNaVisao(visaoAtual)) {
             recolherLixo(visaoAtual);
@@ -112,7 +134,7 @@ public class Coletor {
 
             }
 
-            calcularTrajetoria = calcularTrajetoria(visaoAtual, areaTemporaria.getX(), areaTemporaria.getY(), alvo);
+            calcularTrajetoria = calcularTrajetoriaLixeira(visaoAtual);
             if (!calcularTrajetoria.getArea().isCaminhoEscolhido()) {
                 xAtual = calcularTrajetoria.getArea().getX();
                 yAtual = calcularTrajetoria.getArea().getY();
@@ -138,39 +160,168 @@ public class Coletor {
         //3,8
     }
 
-    public void mover(Area visaoAtual[][]) {
-        gastaEnergia();
+    public int moverParaUmaLixeira(Area visaoAtual[][]) {
+        AreaCusto calcularTrajetoria = null;
+        Area areaTemporaria = null;
+        /**
+         * 1 - move-se para um lixo 2 - move-se para um alvo
+         */
+
         System.out.println("minha energia atual é: " + energiaAtual);
         if (verificaSeHaLixoNaVisao(visaoAtual)) {
             recolherLixo(visaoAtual);
+            return 1;
         }
+        System.out.println("Minha posição:x: " + xAtual + " / y: " + yAtual);
 
-        for (int y = 0; y < visaoAtual.length; y++) {
+        /*
 
-            for (int x = 0; x < visaoAtual.length; x++) {
-                Object o = visaoAtual[x][y];
-                if (o != null) {
-                    Area a = (Area) o;
+         if (l.getTipoDeArmazenagem() == TipoDeLixo.metal && lixeirasVisitadas == 1 && statusLixeiraCheia) {
+         alvo = l;
 
+         }
+         if (l.getTipoDeArmazenagem() == TipoDeLixo.papel && lixeirasVisitadas == 2 && statusLixeiraCheia) {
+         alvo = l;
+
+         }
+         if (l.getTipoDeArmazenagem() == TipoDeLixo.plastico && lixeirasVisitadas == 3 && statusLixeiraCheia) {
+         alvo = l;
+
+         }
+         if (l.getTipoDeArmazenagem() == TipoDeLixo.vidro && lixeirasVisitadas == 4 && statusLixeiraCheia) {
+         alvo = l;
+
+         }
+         */
+        calcularTrajetoria = calcularTrajetoriaLixeira(visaoAtual);
+        if (!calcularTrajetoria.getArea().isCaminhoEscolhido()) {
+            xAtual = calcularTrajetoria.getArea().getX();
+            yAtual = calcularTrajetoria.getArea().getY();
+            if (calcularTrajetoria.getCusto() <= 1 && calcularTrajetoria.getCusto() > 0) {
+                lixeirasVisitadas++;
+            }
+            if (lixeirasVisitadas > 4) {
+                lixeirasVisitadas = 1;
+                if (lixeiraDoColetor.size() > capacidadeLixeira) {
+                    statusLixeiraCheia = false;
                 }
             }
+            return 1;
+        }
+
+        //System.out.println((locaisLixeiras.get(0).getX() + 1) + "/" + (locaisLixeiras.get(0).getY() + 1));
+        if (!calcularTrajetoria.getArea().isCaminhoEscolhido()) {
+            xAtual = calcularTrajetoria.getArea().getX();
+            yAtual = calcularTrajetoria.getArea().getY();
+            return 1;
+        }
+        return 0;
+        //3,8
+    }
+
+    public TipoDeLixo qualOLixoMaisPerto() {
+
+        return null;
+
+    }
+
+    public void mover(Area visaoAtual[][]) {
+
+        /*
+        - * - -
+        - - - *
+        - - - *
+        - - * -
+        - * - -
+        * - - -
+        Eu não entendi como fazer a logica completa do mover 
+        minha pos sempre no quadrado de 5/5 é a (2,2)
+        */
+        
+        
+        int y = 2;
+        Object objetoProximo = null;
+        Object objetoAtual =null;
+        for (int x = 0; x < visaoAtual.length; x++) {
+            
+                objetoAtual = visaoAtual[x][y];
+                if (sentidoDoMovimento) {
+                    objetoProximo = visaoAtual[x+1][y];
+                }
+                else{
+                    objetoProximo = visaoAtual[x-1][y];
+                }
+                    if (objetoProximo != null) {
+                        Area a = (Area) objetoProximo;
+
+                            if (a.getY() == yAtual && a.getX() == xAtual) {
+                                if (oCaminhoPodeSerUsado(a)) {
+                                    
+                                }
+
+                            }
+                        }
+                    else{
+                       sentidoDoMovimento = !sentidoDoMovimento ;
+                       
+                    }
+                
+            
+
         }
     }
 
-    private void desviar() {
+ 
 
-    }
+    public int recolherLixo(Area visaoAtual[][]) {
+        AreaCusto calcularTrajetoria = calcularTrajetoriaLixo(visaoAtual);
 
-    public void recolherLixo(Area visaoAtual[][]) {
-        gastaEnergia();
+        if (!calcularTrajetoria.getArea().isCaminhoEscolhido()) {
+            xAtual = calcularTrajetoria.getArea().getX();
+            yAtual = calcularTrajetoria.getArea().getY();
+
+            if (lixeiraDoColetor.size() < capacidadeLixeira) {
+                if (calcularTrajetoria.getCusto() <= 1) {
+                    lixeiraDoColetor.add((Lixo) calcularTrajetoria.getArea().getItem());
+                    calcularTrajetoria.getArea().setItem(null);
+                }
+                
+                
+            } else {
+                statusLixeiraCheia = true;
+            }
+
+            return 1;
+        }
+
+        //System.out.println((locaisLixeiras.get(0).getX() + 1) + "/" + (locaisLixeiras.get(0).getY() + 1));
+        if (!calcularTrajetoria.getArea().isCaminhoEscolhido()) {
+            xAtual = calcularTrajetoria.getArea().getX();
+            yAtual = calcularTrajetoria.getArea().getY();
+            return 1;
+        }
+        return 0;
     }
 
     public void recolhendoLixo() {
     }
 
-    public void carregar() {
+    public void carregar(Area visaoAtual[][]) {
 
-        carregando(new Recarga("me altere"));
+        //carregando(new Recarga("me altere"));
+        calcularTrajetoriaRecarga(visaoAtual);
+
+    }
+
+    public int procuraMaisPerto(Object itemASerBuscado) {
+
+        return procuraItemMaisPerto(0);
+
+    }
+
+    public int procuraItemMaisPerto(int custo) {
+
+        return 0;
 
     }
 
@@ -182,14 +333,9 @@ public class Coletor {
 
     }
 
-    public void descarregarLixo(Area[][] visao) {
-        verificaSeTemEnergiaOBastante();
-
-    }
-
     public void descarregandoLixo(Lixeira lixeira, Lixo lixo) {
         if (lixeira.getTipoDeArmazenagem() == lixo.getTipoDeLixo()) {
-            gastaEnergia();
+            // gastaEnergia();
         }
     }
 
@@ -198,11 +344,14 @@ public class Coletor {
         return "*";
     }
 
-    public AreaCusto calcularTrajetoria(Area visaoAtual[][], int xAlvo, int yAlvo, Object itemASerPesquisado) {
+    public AreaCusto calcularTrajetoriaLixeira(Area visaoAtual[][]) {
 
         Area caminhoAtual = null;
         double custo = 999;
-        if (xAlvo != xAtual || yAlvo != yAtual) {
+        for (Area areaDaLixeira : locaisLixeiras) {
+
+            int xAlvo = areaDaLixeira.getX();
+            int yAlvo = areaDaLixeira.getY();
 
             for (int x = 0; x < visaoAtual.length; x++) {
                 double trajeto = 0;
@@ -225,23 +374,14 @@ public class Coletor {
                                 caminhoAtual = a;
 
                             }
-                            if (itemASerPesquisado instanceof Lixeira || itemASerPesquisado instanceof Recarga) {
-                                if ((custo <= 1 && custo > 0) && (Math.abs(xAlvo - a.getX()) == 1) && (Math.abs(yAlvo - a.getY()) == 1)) {
-                                    System.out.println("Destino: " + xAlvo + ":" + yAlvo);
-                                    System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
-                                    System.out.println("Estou circulando meu de destino ");
-                                    caminhoAtual.setCaminhoEscolhido(true);
 
-                                    return new AreaCusto(caminhoAtual, custo);
-                                }
-                            } else {
-                                if ((custo <= 1 && custo > 0) && (Math.abs(xAlvo - a.getX()) == 1) && (Math.abs(yAlvo - a.getY()) == 1)) {
-                                    System.out.println("Destino: " + xAlvo + ":" + yAlvo);
-                                    System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
-                                    System.out.println("Estou circulando meu de destino ");
-                                    caminhoAtual.setCaminhoEscolhido(true);
-                                    return new AreaCusto(caminhoAtual, custo);
-                                }
+                            if ((custo <= 1 && custo > 0) && (Math.abs(xAlvo - a.getX()) == 1) && (Math.abs(yAlvo - a.getY()) == 1)) {
+                                System.out.println("Destino: " + xAlvo + ":" + yAlvo);
+                                System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
+                                System.out.println("Estou circulando meu de destino ");
+                                caminhoAtual.setCaminhoEscolhido(true);
+
+                                return new AreaCusto(caminhoAtual, custo);
 
                             }
                         }
@@ -250,16 +390,133 @@ public class Coletor {
             }
             System.out.println("Destino: " + xAlvo + ":" + yAlvo);
             System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
-        } else {
-            System.out.println("ja cheguei onde queria ir");
-            return null;
-        }
 
+        }
         return new AreaCusto(caminhoAtual, custo);
     }
 
+    public AreaCusto calcularTrajetoriaRecarga(Area visaoAtual[][]) {
+        Area caminhoAtual = null;
+        double custo = 999;
+        for (Area areaDaRecarga : locaisPontosDeRecarga) {
+            int xAlvo = areaDaRecarga.getX();
+            int yAlvo = areaDaRecarga.getY();
+
+            for (int x = 0; x < visaoAtual.length; x++) {
+                double trajeto = 0;
+                for (int y = 0; y < visaoAtual.length; y++) {
+
+                    Object o = visaoAtual[x][y];
+                    if (o != null) {
+                        Area a = (Area) o;
+
+                        if (a.getX() == xAtual && a.getY() == yAtual) {
+                            continue;
+                        }
+
+                        if (oCaminhoPodeSerUsado(a)) {
+                            trajeto = trajeto + calculaTrajetoriaPasso1a(xAlvo, a.getX(), yAlvo, a.getY());
+                            //trajeto = trajeto + calculaTrajetoriaPasso1b(xAlvo, a.getX(), yAlvo, a.getY());
+
+                            if (custo > trajeto && custo >= 0) {
+                                custo = trajeto;
+                                caminhoAtual = a;
+
+                            }
+
+                            if ((custo <= 1 && custo > 0) && (Math.abs(xAlvo - a.getX()) == 1) && (Math.abs(yAlvo - a.getY()) == 1)) {
+                                System.out.println("Destino: " + xAlvo + ":" + yAlvo);
+                                System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
+                                System.out.println("Estou circulando meu de destino ");
+                                caminhoAtual.setCaminhoEscolhido(true);
+
+                                return new AreaCusto(caminhoAtual, custo);
+
+                            }
+                        }
+                    }
+                }
+            }
+            System.out.println("Destino: " + xAlvo + ":" + yAlvo);
+            System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
+
+        }
+        return new AreaCusto(caminhoAtual, custo);
+    }
+
+    public AreaCusto calcularTrajetoriaLixo(Area visaoAtual[][]) {
+
+        Area caminhoAtual = null;
+        ArrayList<AreaCusto> temporario = new ArrayList<>();
+        double custo = 999;
+
+        // if (xAlvo != xAtual || yAlvo != yAtual) {
+        
+        
+
+        for (int x = 0; x < visaoAtual.length; x++) {
+            double trajeto = 0;
+            for (int y = 0; y < visaoAtual.length; y++) {
+
+                Object o = visaoAtual[x][y];
+                if (o != null) {
+                    Area a = (Area) o;
+                    if (a.getX() == xAtual && a.getY() == yAtual) {
+                        
+                        if (a.getItem() instanceof Lixo) {
+                            return new AreaCusto(a, 0);
+                        }
+                    }
+                    if (oCaminhoPodeSerUsado(a)) {
+                        trajeto = trajeto + calculaTrajetoriaPasso1a(xAtual, a.getX(), yAtual, a.getY());
+                        //trajeto = trajeto + calculaTrajetoriaPasso1b(xAlvo, a.getX(), yAlvo, a.getY());
+
+                        if ((custo > trajeto && custo >= 0) || (a.getItem() != null)) {
+                            custo = trajeto;
+                            System.out.println("Custo calculado: " + custo);
+                            System.out.println("Area calculado: " + a.toString());
+                            caminhoAtual = a;
+
+                            if (caminhoAtual.getItem() != null) {
+                                
+                                    temporario.add(new AreaCusto(caminhoAtual, custo));
+                            }
+
+                        }
+
+                    }
+                }
+            }
+        }
+
+        System.out.println("Menor caminho possivel: " + caminhoAtual.getX() + ":" + caminhoAtual.getY() + " custo " + custo);
+        /*  } else {
+         System.out.println("ja cheguei onde queria ir");
+         return null;
+         }
+         */
+        if (!temporario.isEmpty()) {
+            AreaCusto areaFinal = new AreaCusto(new Area(xAtual, yAtual), 9999);
+            for(AreaCusto area :temporario){
+                if (area.getCusto()< areaFinal.getCusto()){
+                    areaFinal = area;
+                    System.out.println("Ops! achei um lixo proximo de mim!\n Escolherei o com o menor Custo! " + areaFinal.getArea().getX() + ":" + areaFinal.getArea().getY() + " custo " + areaFinal.getCusto());
+                }
+            }
+            return areaFinal;
+            
+            
+        }
+        return new AreaCusto(caminhoAtual, custo);
+
+    }
+/**
+ * 
+ * @param areaTeste verifica se a area não contem nenhum item bloqueante
+ * @return retorna o resultado disso
+ */
     private boolean oCaminhoPodeSerUsado(Area areaTeste) {
-        if (areaTeste.getItem() instanceof Recarga || areaTeste.getItem() instanceof Lixeira) {
+        if (areaTeste.getItem() instanceof Recarga || areaTeste.getItem() instanceof Lixeira || areaTeste.getColetor() != null) {
             return false;
         }
         return true;
@@ -302,12 +559,11 @@ public class Coletor {
         verificaSeTemEnergiaOBastante();
     }
 
-    public void verificaSeTemEnergiaOBastante() {
+    public boolean verificaSeTemEnergiaOBastante() {
         if (energiaAtual <= energiaMinima) {
-
-            carregar();
-
+            return false;
         }
+        return true;
 
     }
 
@@ -321,6 +577,14 @@ public class Coletor {
 
     public int getEnergiaMinima() {
         return energiaMinima;
+    }
+
+    private void descarregarLixo(Area[][] visaoAtual) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private void recarregar(Area[][] visaoAtual) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

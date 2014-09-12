@@ -35,6 +35,15 @@ public class Area {
         this.y = y;
     }
 
+    public Area(Area area) {
+        this.item = area.getItem();
+        this.coletor = area.getColetor();
+        this.x = area.getX();
+        this.y = area.getY();
+    }
+
+    
+
     @Override
     public String toString() {
         String saida = "";

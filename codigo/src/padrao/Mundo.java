@@ -130,8 +130,8 @@ public class Mundo {
         int inicializaVisao = tamanhoVisaoDoColetor * 2 + 1;
         for (int i = 0; i < inicializaVisao; i++) {
             System.out.println("");
-            
-                for (int j = 0; j < inicializaVisao; j++) {
+
+            for (int j = 0; j < inicializaVisao; j++) {
                 System.out.print(criaUmaVisao[i][j]);
             }
         }
@@ -187,12 +187,12 @@ public class Mundo {
         System.out.println("Visão do coletor");
         System.out.println("x1: " + criaQuandradoX1 + " x2:" + criaQuandradoX2);
         System.out.println("y1: " + criaQuandradoY1 + " y2:" + criaQuandradoY2);
-        
+
         int auxI = 0;
 
-        for (int x = criaQuandradoX1; x <= criaQuandradoX2 ; x++) {
+        for (int x = criaQuandradoX1; x <= criaQuandradoX2; x++) {
             int auxJ = 0;
-            for (int y = criaQuandradoY1; y <= criaQuandradoY2 ; y++) {    
+            for (int y = criaQuandradoY1; y <= criaQuandradoY2; y++) {
                 Area a = areaDoMundo[x][y];
                 visao[auxI][auxJ] = a;
                 auxJ++;
@@ -215,7 +215,7 @@ public class Mundo {
     private int criaQuandradoX2(int posicao, int tamanhoDaVisao) {
 
         if (posicao + tamanhoDaVisao >= tamanhoDoX) {
-            return tamanhoDoX-1;
+            return tamanhoDoX - 1;
         }
 
         return posicao + tamanhoDaVisao;
@@ -233,78 +233,112 @@ public class Mundo {
     private int criaQuandradoY2(int posicao, int tamanhoDaVisao) {
 
         if (posicao + tamanhoDaVisao >= tamanhoDoY) {
-            return tamanhoDoY-1;
+            return tamanhoDoY - 1;
         }
 
         return posicao + tamanhoDaVisao;
     }
 
     public void executaOMunda() {
-       
+
         Object object = itemsASeremExecutados.remove(0);
-while (true){
-        if (object instanceof Coletor) {
-            Coletor c = (Coletor) object;
-            mudaUmaAreaColetor( c.getxAtual(),c.getyAtual(), c);
-            Area[][] criaUmaVisao = criaUmaVisao(c.getxAtual(), c.getyAtual());
-            int xAntigo = c.getxAtual();
-            int yAntigo = c.getyAtual();
+        do {
+            if (object instanceof Coletor) {
+                Coletor c = (Coletor) object;
+                mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
+                Area[][] criaUmaVisao = criaUmaVisao(c.getxAtual(), c.getyAtual());
+                int xAntigo = c.getxAtual();
+                int yAntigo = c.getyAtual();
 
-            printaMundo();
-            printaVisao(criaUmaVisao);
-            //printaMundo();
-            c.percepcao(criaUmaVisao);
-            mudaUmaAreaColetor(xAntigo, yAntigo, null);
-            mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
-            printaMundo();
-            if (c.getEnergiaAtual() <= c.getEnergiaMinima()-10){
-                break;
+                printaMundo();
+                printaVisao(criaUmaVisao);
+                //printaMundo();
+                c.percepcao(criaUmaVisao);
+                mudaUmaAreaColetor(xAntigo, yAntigo, null);
+                mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
+                printaMundo();
+                if (c.getEnergiaAtual() <= c.getEnergiaMinima() - 10) {
+                    object = null;
+                }
+
             }
+            if (object instanceof Recarga) {
 
-        }
-        if (object instanceof Recarga) {
+            }
+            if (object instanceof Lixeira) {
 
-        }
-        if (object instanceof Lixeira) {
-
-        }
-
-        itemsASeremExecutados.add(object);
+            }
+            if (object != null) {
+                itemsASeremExecutados.add(object);
+            }
+        } while (itemsASeremExecutados.size() > 0);
     }
-    }
 
-    public void mudaUmaAreaItem(int x, int y, Object novoObjeto) {
+    /**
+     *
+     * @param x posicao
+     * @param y posicao
+     * @param novoObjeto nov
+     */
+    public Area mudaUmaAreaItem(int x, int y, Object novoObjeto) {
         Area a = areaDoMundo[x][y];
-
+        Area oldArea = new Area(a);
         a.setItem(novoObjeto);
+        return oldArea;
 
     }
 
+    /**
+     *
+     * @param x posição
+     * @param y posição
+     * @param novoObjeto objeto onde vai ser adicionado o item
+     * @return resultado da tentativa de mudanção de um coletor de local
+     */
     public boolean mudaUmaAreaColetor(int x, int y, Object novoObjeto) {
 
         Area a = areaDoMundo[x][y];
+        Object item = a.getItem();
+
+        if (item instanceof Lixeira) {
+            return false;
+        }
+        if (item instanceof Recarga) {
+            return false;
+        }
         if (a.getColetor() == null) {
             a.setColetor((Coletor) novoObjeto);
             return true;
         }
         if (a.getColetor() != null && novoObjeto == null) {
             a.setColetor(null);
+            return true;
         }
 
         return false;
 
     }
 
+    /**
+     *
+     * @param x posicao
+     * @param y posicao
+     * @param capacidadeLixeira capacidade da lixeira
+     * @param energiaMinima energia minima para o coletor chegar a uma lixeira
+     * @param energiaMaxima energia maxima do coletor
+     */
     public void criaUmColetor(int x, int y, int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
         Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y);
         Area area = areaDoMundo[x][y];
-        if (area.getColetor()==null && (area.getItem() ==null))
-            area.setColetor(coletor);
-        else{
-            Random gerador = new Random();
-            int aleatorioX = gerador.nextInt(tamanhoDoX - 1);
-            int aleatorioY = gerador.nextInt(tamanhoDoY - 1);
-            criaUmColetor(aleatorioX, aleatorioY, capacidadeLixeira, energiaMinima, energiaMaxima);
+        if (area.getColetor() == null) {
+            if (area.getItem() == null) {
+                area.setColetor(coletor);
+            } else {
+                Random gerador = new Random();
+                int aleatorioX = gerador.nextInt(tamanhoDoX - 1);
+                int aleatorioY = gerador.nextInt(tamanhoDoY - 1);
+                criaUmColetor(aleatorioX, aleatorioY, capacidadeLixeira, energiaMinima, energiaMaxima);
+            }
         }
         itemsASeremExecutados.add(coletor);
 
