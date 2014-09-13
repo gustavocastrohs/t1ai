@@ -16,7 +16,8 @@ public class Area {
     private int x;
     private int y;
     private boolean caminhoEscolhido=false;
-
+    
+    
     public Area(int x, int y) {
         this.x = x;
         this.y = y;

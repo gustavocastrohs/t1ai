@@ -124,20 +124,7 @@ public class Mundo {
 
     }
 
-    public void printaVisao(Area[][] criaUmaVisao) {
 
-        System.out.println("printando a visao");
-        int inicializaVisao = tamanhoVisaoDoColetor * 2 + 1;
-        for (int i = 0; i < inicializaVisao; i++) {
-            System.out.println("");
-
-            for (int j = 0; j < inicializaVisao; j++) {
-                System.out.print(criaUmaVisao[i][j]);
-            }
-        }
-        System.out.println("\n");
-        // System.out.println(locaisDosLixos);
-    }
 
     private Lixo criaLixo(int numeroDoLixo) {
 
@@ -251,13 +238,13 @@ public class Mundo {
                 int yAntigo = c.getyAtual();
 
                 printaMundo();
-                printaVisao(criaUmaVisao);
+                c.printaVisao(criaUmaVisao);
                 //printaMundo();
                 c.percepcao(criaUmaVisao);
                 mudaUmaAreaColetor(xAntigo, yAntigo, null);
                 mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
                 printaMundo();
-                if (c.getEnergiaAtual() <= c.getEnergiaMinima() - 10) {
+                if (c.getEnergiaAtual() == 0) {
                     object = null;
                 }
 
@@ -328,7 +315,8 @@ public class Mundo {
      * @param energiaMaxima energia maxima do coletor
      */
     public void criaUmColetor(int x, int y, int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
-        Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y);
+        Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y,tamanhoVisaoDoColetor);
+        coletor.setEnergiaAtual(19);
         Area area = areaDoMundo[x][y];
         if (area.getColetor() == null) {
             if (area.getItem() == null) {
