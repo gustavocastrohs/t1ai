@@ -15,9 +15,8 @@ public class Area {
     private Coletor coletor;
     private int x;
     private int y;
-    private boolean caminhoEscolhido=false;
-    
-    
+    //private boolean caminhoEscolhido=false;
+
     public Area(int x, int y) {
         this.x = x;
         this.y = y;
@@ -42,8 +41,6 @@ public class Area {
         this.x = area.getX();
         this.y = area.getY();
     }
-
-    
 
     @Override
     public String toString() {
@@ -94,12 +91,11 @@ public class Area {
         this.coletor = coletor;
     }
 
-    public boolean isCaminhoEscolhido() {
-        return caminhoEscolhido;
-    }
-
-    public void setCaminhoEscolhido(boolean caminhoEscolhido) {
-        this.caminhoEscolhido = caminhoEscolhido;
-    }
-
+//    public boolean isCaminhoEscolhido() {
+//        return caminhoEscolhido;
+//    }
+//
+//    public void setCaminhoEscolhido(boolean caminhoEscolhido) {
+//        this.caminhoEscolhido = caminhoEscolhido;
+//    }
 }
