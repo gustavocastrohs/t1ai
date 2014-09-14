@@ -7,6 +7,7 @@ package padrao;
 
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
+import java.util.Random;
 
 /**
  *
@@ -55,8 +56,7 @@ public class Coletor {
     public int percepcao(Area visaoAtual[][]) {
         if (statusConectaNaRecarrega == 0) {
             gastaEnergia();
-            System.out.println("minha energia atual é: " + energiaAtual);
-            System.out.println("Quantidade de itens na lixeira " + lixeiraDoColetor.size());
+            printaMeusStatus();
             if (verificaSeTemEnergiaOBastante()) {
 
                 if (statusLixeiraCheia) {
@@ -179,7 +179,7 @@ public class Coletor {
          * 1 - move-se para um lixo 2 - move-se para um alvo
          */
 
-        System.out.println("minha energia atual é: " + energiaAtual);
+        printaMeusStatus();
 
         calcularTrajetoria = calcularTrajetoriaLixeira(visaoAtual);
 
@@ -199,49 +199,17 @@ public class Coletor {
     }
 
     public void mover(Area visaoAtual[][]) {
+        Random gerador = new Random();
+        int aleatorioX = gerador.nextInt(4);
+        int aleatorioY = gerador.nextInt(4);
+        Area area = visaoAtual[aleatorioX][aleatorioY];
+        if (oCaminhoPodeSerUsado(area)) {
+            xAtual = area.getX();
+            yAtual = area.getY();
+        } else {
+            mover(visaoAtual);
+        }
 
-        /*
-         - * - -
-         - - - *
-         - - - *
-         - - * -
-         - * - -
-         * - - -
-         Eu não entendi como fazer a logica completa do mover 
-         minha pos sempre no quadrado de 5/5 é a (2,2)
-         */
-        /* 
-         int y = 2;
-         Object objetoProximo = null;
-         Object objetoAtual =null;
-         for (int x = 0; x < visaoAtual.length; x++) {
-            
-         objetoAtual = visaoAtual[x][y];
-         if (sentidoDoMovimento) {
-         objetoProximo = visaoAtual[x+1][y];
-         }
-         else{
-         objetoProximo = visaoAtual[x-1][y];
-         }
-         if (objetoProximo != null) {
-         Area a = (Area) objetoProximo;
-
-         if (a.getY() == yAtual && a.getX() == xAtual) {
-         if (oCaminhoPodeSerUsado(a)) {
-                                    
-         }
-
-         }
-         }
-         else{
-         sentidoDoMovimento = !sentidoDoMovimento ;
-                       
-         }
-                
-            
-
-         }
-         */
     }
 
     public int recolherLixo(Area visaoAtual[][]) {
@@ -622,7 +590,7 @@ public class Coletor {
             yAtual = calcularTrajetoriaRecarga.getArea().getY();
         }
 
-        System.out.println("Minha energia atual é : " + energiaAtual);
+        printaMeusStatus();
         return 0;
 
     }
@@ -646,4 +614,10 @@ public class Coletor {
         // System.out.println(locaisDosLixos);
     }
 
+    
+    public void printaMeusStatus(){
+    
+                System.out.println("minha energia atual é: " + energiaAtual);
+            System.out.println("Quantidade de itens na lixeira " + lixeiraDoColetor.size());
+    }
 }
