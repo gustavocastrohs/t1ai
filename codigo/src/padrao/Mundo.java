@@ -331,4 +331,23 @@ public class Mundo {
         itemsASeremExecutados.add(coletor);
 
     }
+    
+    public void criaUmColetor( int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
+        Random gerador = new Random();
+        int x = gerador.nextInt(tamanhoDoX - 1);
+        int y = gerador.nextInt(tamanhoDoY - 1);
+    
+        Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y, tamanhoVisaoDoColetor);
+        coletor.setEnergiaAtual(19);
+        Area area = areaDoMundo[x][y];
+        if (area.getColetor() == null && area.getItem() == null) {
+
+            area.setColetor(coletor);
+        } else {
+            criaUmColetor(x, y, capacidadeLixeira, energiaMinima, energiaMaxima);
+        }
+
+        itemsASeremExecutados.add(coletor);
+
+    }
 }

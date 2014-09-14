@@ -18,7 +18,9 @@ public class main {
     public static void main(String[] args) {
         // TODO code application logic here
         Mundo m = new Mundo(10, 10,4,4,2);
-        m.criaUmColetor(6,1,30, 15, 30);
+        
+        // 6 , 1 ( posição sugerida por mim , mas pode ser feito randomica) , capacidade do coletor, energia minma,energia maxima
+        m.criaUmColetor(6,1,2, 10, 30);
 //        m.criaUmColetor(6,1,30, 10, 30);
         
         m.executaOMunda();
