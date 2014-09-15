@@ -50,8 +50,6 @@ public class Coletor {
         tipoDeLixeirasASeremVisitadas = new ArrayList<>();
     }
 
-
-
     public int percepcao(Area visaoAtual[][]) {
         if (statusConectaNaRecarrega == 0) {
             gastaEnergia();
@@ -185,6 +183,10 @@ public class Coletor {
         xAtual = calcularTrajetoria.getArea().getX();
         yAtual = calcularTrajetoria.getArea().getY();
         if (calcularTrajetoria.getCusto() <= 1 && calcularTrajetoria.getCusto() > 0) {
+            
+            /**
+            implementar lixeira
+            */
             lixeirasVisitadas++;
         }
         if (lixeirasVisitadas > 4) {
@@ -254,7 +256,7 @@ public class Coletor {
 
     @Override
     public String toString() {
-        return "* "+getxAtual() + " / "+getyAtual();
+        return "* " + getxAtual() + " / " + getyAtual();
     }
 
     public AreaCusto calcularTrajetoriaLixeira(Area visaoAtual[][]) {
@@ -323,40 +325,45 @@ public class Coletor {
                 continue;
             } else {
 
-                double trajeto = 0;
+                
                 for (int x = 0; x < visaoAtual.length; x++) {
-
+                double trajeto = 0;
                     for (int y = 0; y < visaoAtual.length; y++) {
-
+                    //teste
+                    //    trajeto = 0;
                         Object o = visaoAtual[x][y];
                         if (o != null) {
                             Area a = (Area) o;
-
+                            
                             if (a.getX() == xAtual && a.getY() == yAtual) {
                                 continue;
                             }
 
                             if (oCaminhoPodeSerUsado(a)) {
+                                //1trajeto = trajeto + calculaTrajetoriaPasso1b(xAlvo, a.getX(), yAlvo, a.getY());
                                 trajeto = trajeto + calculaTrajetoriaPasso1a(xAlvo, a.getX(), yAlvo, a.getY());
                                 //trajeto = trajeto + calculaTrajetoriaPasso1b(xAlvo, a.getX(), yAlvo, a.getY());
-
+                                if (custo == 0){
+                                    System.out.println("possivel erro");
+                                }
+                                
                                 if (custo > trajeto && custo >= 0) {
                                     custo = trajeto;
                                     caminhoAtual = new AreaCusto(a, custo);
 
+                                    double calculoDoX = Math.abs(xAlvo - a.getX());
+                                    double calculoDoY = Math.abs(yAlvo - a.getY());
+                                    if ((custo < 2 && custo > 0) && (calculoDoX == 1) && (calculoDoY == 1)) {
+                                        System.out.println("Destino: " + xAlvo + ":" + yAlvo);
+                                        System.out.println("Menor caminho possivel: " + caminhoAtual.getArea().getX() + ":" + caminhoAtual.getArea().getY() + " custo " + custo);
+                                        System.out.println("Estou circulando uma recarga ");
+                                        //    caminhoAtual.setCaminhoEscolhido(true);
+
+                                        //caminhoAtual.setCusto(0);
+                                        return new AreaCusto(caminhoAtual.getArea(), 0);
+
+                                    }
                                 }
-
-                                if ((custo < 2 && custo > 0) && (Math.abs(xAlvo - a.getX()) == 1) && (Math.abs(yAlvo - a.getY()) == 1)) {
-                                    System.out.println("Destino: " + xAlvo + ":" + yAlvo);
-                                    System.out.println("Menor caminho possivel: " + caminhoAtual.getArea().getX() + ":" + caminhoAtual.getArea().getY() + " custo " + custo);
-                                    System.out.println("Estou circulando uma recarga ");
-                                    //    caminhoAtual.setCaminhoEscolhido(true);
-
-                                    caminhoAtual.setCusto(0);
-                                    return new AreaCusto(caminhoAtual.getArea(), 0);
-
-                                }
-
                             }
 
                         }
@@ -367,7 +374,6 @@ public class Coletor {
 
             }
 
-            
         }
 
         return new AreaCusto(caminhoAtual.getArea(), custo);
@@ -478,7 +484,19 @@ public class Coletor {
         //mais precisa e mais rapida já que podemos andar em diagonal
         int dx = xAlvo - xArea;
         int dy = yAlvo - yArea;
-        return sqrt((dx * dx) + (dy * dy));
+        double heuristic = sqrt((dx * dx) + (dy * dy));
+        
+        return heuristic;
+    }
+
+    private double calculaTrajetoriaPasso1b(int xAlvo, int xArea, int yAlvo, int yArea) {
+        //Heuristica Euclidiana
+        //mais precisa e mais rapida já que podemos andar em diagonal
+        double dx = Math.abs(xAlvo - xArea);
+        double dy = Math.abs(yAlvo - yArea);
+
+        double heuristic = dx + dy;
+        return heuristic;
     }
 
     public int getxAtual() {
@@ -566,23 +584,24 @@ public class Coletor {
         Recarga recarga = null;
         if (calcularTrajetoriaRecarga.getCusto() == 0 && statusConectaNaRecarrega == 0) {
             recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual);
-
-            if (recarga.disponivelParaRecarga()) {
-                //recarga ainda tem vagas
-                statusConectaNaRecarrega = recarga.conectaParaRecarrega();
-                xAtual = calcularTrajetoriaRecarga.getArea().getX();
-                yAtual = calcularTrajetoriaRecarga.getArea().getY();
-                carregando(recarga);
-                return 0;
-            } else {
-                //recarga precisou ser recalculada
-                AreaCusto calcularTrajetoriaRecarga1 = calcularTrajetoriaRecarga(visaoAtual, recarga);
-                xAtual = calcularTrajetoriaRecarga1.getArea().getX();
-                yAtual = calcularTrajetoriaRecarga1.getArea().getY();
-                return 0;
+            if (recarga != null) {
+                if (recarga.disponivelParaRecarga()) {
+                    //recarga ainda tem vagas
+                    statusConectaNaRecarrega = recarga.conectaParaRecarrega();
+                    xAtual = calcularTrajetoriaRecarga.getArea().getX();
+                    yAtual = calcularTrajetoriaRecarga.getArea().getY();
+                    carregando(recarga);
+                    return 0;
+                } else {
+                    //recarga precisou ser recalculada
+                    AreaCusto calcularTrajetoriaRecarga1 = calcularTrajetoriaRecarga(visaoAtual, recarga);
+                    xAtual = calcularTrajetoriaRecarga1.getArea().getX();
+                    yAtual = calcularTrajetoriaRecarga1.getArea().getY();
+                    return 0;
+                }
             }
 
-        } else if (calcularTrajetoriaRecarga.getCusto() == 0 && statusConectaNaRecarrega != 0 && (energiaAtual < energiaMaxima)) {
+        } else if (statusConectaNaRecarrega != 0 && (energiaAtual < energiaMaxima)) {
             recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual);
             carregando(recarga);
             return 0;
@@ -622,11 +641,10 @@ public class Coletor {
         // System.out.println(locaisDosLixos);
     }
 
-    
-    public void printaMeusStatus(){
-    
-            System.out.println("minha energia atual é: " + energiaAtual);
-            System.out.println("Quantidade de itens na lixeira " + lixeiraDoColetor.size());
+    public void printaMeusStatus() {
+
+        System.out.println("minha energia atual é: " + energiaAtual);
+        System.out.println("Quantidade de itens na lixeira " + lixeiraDoColetor.size());
 
     }
 
@@ -669,7 +687,5 @@ public class Coletor {
     public void setTamanhoVisaoDoColetor(int tamanhoVisaoDoColetor) {
         this.tamanhoVisaoDoColetor = tamanhoVisaoDoColetor;
     }
-    
-    
-    
+
 }
