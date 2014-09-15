@@ -50,8 +50,7 @@ public class Coletor {
         tipoDeLixeirasASeremVisitadas = new ArrayList<>();
     }
 
-    public Coletor() {
-    }
+
 
     public int percepcao(Area visaoAtual[][]) {
         if (statusConectaNaRecarrega == 0) {
@@ -200,8 +199,8 @@ public class Coletor {
 
     public void mover(Area visaoAtual[][]) {
         Random gerador = new Random();
-        int aleatorioX = gerador.nextInt(4);
-        int aleatorioY = gerador.nextInt(4);
+        int aleatorioX = gerador.nextInt(visaoAtual.length);
+        int aleatorioY = gerador.nextInt(visaoAtual.length);
         Area area = visaoAtual[aleatorioX][aleatorioY];
         if (oCaminhoPodeSerUsado(area)) {
             xAtual = area.getX();
@@ -255,7 +254,7 @@ public class Coletor {
 
     @Override
     public String toString() {
-        return "*";
+        return "* "+getxAtual() + " / "+getyAtual();
     }
 
     public AreaCusto calcularTrajetoriaLixeira(Area visaoAtual[][]) {
@@ -463,10 +462,15 @@ public class Coletor {
      * @return retorna o resultado disso
      */
     private boolean oCaminhoPodeSerUsado(Area areaTeste) {
-        if (areaTeste.getItem() instanceof Recarga || areaTeste.getItem() instanceof Lixeira || areaTeste.getColetor() != null) {
+        if (areaTeste != null) {
+            if (areaTeste.getItem() instanceof Recarga || areaTeste.getItem() instanceof Lixeira || areaTeste.getColetor() != null) {
+                return false;
+            } else {
+                return true;
+            }
+        } else {
             return false;
         }
-        return true;
     }
 
     private double calculaTrajetoriaPasso1a(int xAlvo, int xArea, int yAlvo, int yArea) {
@@ -569,22 +573,26 @@ public class Coletor {
                 xAtual = calcularTrajetoriaRecarga.getArea().getX();
                 yAtual = calcularTrajetoriaRecarga.getArea().getY();
                 carregando(recarga);
+                return 0;
             } else {
                 //recarga precisou ser recalculada
                 AreaCusto calcularTrajetoriaRecarga1 = calcularTrajetoriaRecarga(visaoAtual, recarga);
                 xAtual = calcularTrajetoriaRecarga1.getArea().getX();
                 yAtual = calcularTrajetoriaRecarga1.getArea().getY();
+                return 0;
             }
 
         } else if (calcularTrajetoriaRecarga.getCusto() == 0 && statusConectaNaRecarrega != 0 && (energiaAtual < energiaMaxima)) {
             recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual);
             carregando(recarga);
+            return 0;
 
-        } else if (energiaAtual == energiaMaxima && statusConectaNaRecarrega != 0) {
+        } else if (energiaAtual == energiaMaxima) {
             recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual);
             recarga.liberaPosicao(statusConectaNaRecarrega);
             statusConectaNaRecarrega = 0;
             // carregando(recarga);
+            return 0;
         } else {
             xAtual = calcularTrajetoriaRecarga.getArea().getX();
             yAtual = calcularTrajetoriaRecarga.getArea().getY();
@@ -617,7 +625,51 @@ public class Coletor {
     
     public void printaMeusStatus(){
     
-                System.out.println("minha energia atual é: " + energiaAtual);
+            System.out.println("minha energia atual é: " + energiaAtual);
             System.out.println("Quantidade de itens na lixeira " + lixeiraDoColetor.size());
+
     }
+
+    public ArrayList<Lixo> getLixeiraDoColetor() {
+        return lixeiraDoColetor;
+    }
+
+    public void setLixeiraDoColetor(ArrayList<Lixo> lixeiraDoColetor) {
+        this.lixeiraDoColetor = lixeiraDoColetor;
+    }
+
+    public boolean isStatusLixeiraCheia() {
+        return statusLixeiraCheia;
+    }
+
+    public void setStatusLixeiraCheia(boolean statusLixeiraCheia) {
+        this.statusLixeiraCheia = statusLixeiraCheia;
+    }
+
+    public int getEnergiaMaxima() {
+        return energiaMaxima;
+    }
+
+    public void setEnergiaMaxima(int energiaMaxima) {
+        this.energiaMaxima = energiaMaxima;
+    }
+
+    public int getStatusConectaNaRecarrega() {
+        return statusConectaNaRecarrega;
+    }
+
+    public void setStatusConectaNaRecarrega(int statusConectaNaRecarrega) {
+        this.statusConectaNaRecarrega = statusConectaNaRecarrega;
+    }
+
+    public int getTamanhoVisaoDoColetor() {
+        return tamanhoVisaoDoColetor;
+    }
+
+    public void setTamanhoVisaoDoColetor(int tamanhoVisaoDoColetor) {
+        this.tamanhoVisaoDoColetor = tamanhoVisaoDoColetor;
+    }
+    
+    
+    
 }

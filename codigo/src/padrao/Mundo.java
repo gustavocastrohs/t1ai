@@ -7,6 +7,8 @@ package padrao;
 
 import java.util.ArrayList;
 import java.util.Random;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -21,33 +23,64 @@ public class Mundo {
     private int tamanhoDoX;
     private int tamanhoDoY;
     private Area areaDoMundo[][];
-    private int quantidadeDeLixo;
-    private int quantidadeDeRecargas;
-    private int quantidadeDeLixeiras;
+    
     private int tamanhoVisaoDoColetor;
 
-    public Mundo(int x, int y, int quantidadeDeLixoEsperada, int quantidadeDeRecargas, int tamanhoVisaoDoColetor) {
+    /**
+     *
+     * @param x tamanho do mundo
+     * @param y tamanho do mundo
+     * @param quantidadeDeLixoEsperada quantidade de lixo que será gerada
+     * randomicamente
+     * @param quantidadeDeRecargas quantidade de recargas
+     * @param quantidadeDeLixeirasEsperado
+     * @param capacidadeDaLixeira
+     * @param tamanhoVisaoDoColetor tamanho da visão dos coletores
+     */
+    public Mundo(int x, int y, int quantidadeDeLixoEsperada, int quantidadeDeRecargas, int quantidadeDeLixeirasEsperado, int capacidadeDaLixeira, int tamanhoVisaoDoColetor) throws Exception{
+    int tamanhoTotalDoMundo = x*y;
         tamanhoDoX = x;
         tamanhoDoY = y;
         this.tamanhoVisaoDoColetor = tamanhoVisaoDoColetor;
-        areaDoMundo = new Area[y][x];
+        areaDoMundo = new Area[x][y];
         locaisDosLixos = new ArrayList<>();
         locaisDasRecargas = new ArrayList<>();
         locaisLixeiras = new ArrayList<>();
         itemsASeremExecutados = new ArrayList<>();
         inicializaMundo();
-        quantidadeDeLixo = 0;
-        quantidadeDeLixeiras = 0;
+        int minimoEspaco = 1-(quantidadeDeLixeirasEsperado/4) - quantidadeDeRecargas -quantidadeDeLixoEsperada;
+        System.out.println(tamanhoTotalDoMundo + " == " + minimoEspaco);
+        
+        if (tamanhoTotalDoMundo - minimoEspaco >0)        {
+        
+        
         for (int i = 1; i <= quantidadeDeLixoEsperada; i++) {
-            addLixo();
+            addLixo(i);
         }
+        
         for (int i = 1; i <= quantidadeDeRecargas; i++) {
             addRecarga();
         }
-        addLixeira(TipoDeLixo.metal);
-        addLixeira(TipoDeLixo.vidro);
-        addLixeira(TipoDeLixo.papel);
-        addLixeira(TipoDeLixo.plastico);
+        for (int i = 0; i < quantidadeDeLixeirasEsperado/4; i++) {
+            
+            
+                addLixeira(TipoDeLixo.metal, capacidadeDaLixeira);
+            
+            
+                addLixeira(TipoDeLixo.vidro, capacidadeDaLixeira);
+            
+            
+                addLixeira(TipoDeLixo.papel, capacidadeDaLixeira);
+            
+            
+                addLixeira(TipoDeLixo.plastico, capacidadeDaLixeira);
+            
+        }
+        }
+        else{
+            
+            throw  new Exception("o mundo é muito pequeno para o que voce deseja colocar nele");
+        }
         /**
          * Area[][] criaUmaVisao = criaUmaVisao(3,4,2);
          *
@@ -57,25 +90,25 @@ public class Mundo {
     }
 
     private void inicializaMundo() {
-        for (int y = 0; y < tamanhoDoX; y++) {
-            for (int x = 0; x < tamanhoDoY; x++) {
-                areaDoMundo[y][x] = new Area(y, x);
+
+        for (int x = 0; x < tamanhoDoY; x++) {
+            for (int y = 0; y < tamanhoDoX; y++) {
+                areaDoMundo[x][y] = new Area(x, y);
             }
         }
     }
 
-    private void addLixo() {
+    private void addLixo(int numeroDoLixo) {
         Random gerador = new Random();
         int aleatorioX = gerador.nextInt(tamanhoDoX - 1);
         int aleatorioY = gerador.nextInt(tamanhoDoY - 1);
-        Area a = areaDoMundo[aleatorioY][aleatorioX];
+        Area a = areaDoMundo[aleatorioX][aleatorioY];
         if (a.getItem() == null) {
-            a.setItem(criaLixo(quantidadeDeLixo + 1));
+            a.setItem(criaLixo(numeroDoLixo));
             locaisDosLixos.add(a);
         } else {
-            addLixo();
+            addLixo(numeroDoLixo);
         }
-        quantidadeDeLixo = quantidadeDeLixo + 1;
 
     }
 
@@ -84,47 +117,43 @@ public class Mundo {
         Random gerador = new Random();
         int aleatorioX = gerador.nextInt(tamanhoDoX - 1);
         int aleatorioY = gerador.nextInt(tamanhoDoY - 1);
-        Area a = areaDoMundo[aleatorioY][aleatorioX];
+        Area a = areaDoMundo[aleatorioX][aleatorioY];
         if (a.getItem() == null) {
-            a.setItem(criaRecarga(quantidadeDeRecargas + 1));
+            a.setItem(criaRecarga(aleatorioX, aleatorioY));
             locaisDasRecargas.add(a);
         } else {
             addRecarga();
         }
-        quantidadeDeRecargas = quantidadeDeRecargas + 1;
 
     }
 
-    private void addLixeira(TipoDeLixo tipo) {
+    private void addLixeira(TipoDeLixo tipo, int capacidadeDaLixeira) {
 
         Random gerador = new Random();
         int aleatorioX = gerador.nextInt(tamanhoDoX - 1);
         int aleatorioY = gerador.nextInt(tamanhoDoY - 1);
-        Area a = areaDoMundo[aleatorioY][aleatorioX];
+        Area a = areaDoMundo[aleatorioX][aleatorioY];
         if (a.getItem() == null) {
-            a.setItem(criaLixeira(quantidadeDeLixeiras + 1, tamanhoDoX, tipo));
+            a.setItem(criaLixeira(aleatorioX, aleatorioY, capacidadeDaLixeira, tipo));
             locaisLixeiras.add(a);
         } else {
-            addLixeira(tipo);
+            addLixeira(tipo, capacidadeDaLixeira);
         }
-        quantidadeDeLixeiras = quantidadeDeLixeiras + 1;
 
     }
 
     public void printaMundo() {
 
-        for (int j = 0; j < tamanhoDoY; j++) {
+        for (int x = 0; x < tamanhoDoX; x++) {
             System.out.println("");
-            for (int i = 0; i < tamanhoDoX; i++) {
-
-                System.out.print(areaDoMundo[j][i]);
+            
+                for (int y = 0; y < tamanhoDoY; y++) {
+                System.out.print(areaDoMundo[x][y]);
             }
         }
         System.out.println("\n");
 
     }
-
-
 
     private Lixo criaLixo(int numeroDoLixo) {
 
@@ -148,15 +177,15 @@ public class Mundo {
         return null;
     }
 
-    private Recarga criaRecarga(int numeroDaRecarga) {
+    private Recarga criaRecarga(int x, int y) {
         String prefixo = "R";
-        return new Recarga(prefixo + numeroDaRecarga);
+        return new Recarga(prefixo + "-" + x + "/" + y);
 
     }
 
-    private Lixeira criaLixeira(int numeroDaLixeira, int capacidade, TipoDeLixo tipo) {
+    private Lixeira criaLixeira(int x, int y, int capacidade, TipoDeLixo tipo) {
         String prefixo = tipo.toString();
-        return new Lixeira(capacidade, tipo, prefixo + numeroDaLixeira);
+        return new Lixeira(capacidade, tipo, prefixo + "-" + x + "/" + y);
     }
 
     public Area[][] criaUmaVisao(int posicaoColetorX, int posicaoColetorY) {
@@ -175,16 +204,16 @@ public class Mundo {
         System.out.println("x1: " + criaQuandradoX1 + " x2:" + criaQuandradoX2);
         System.out.println("y1: " + criaQuandradoY1 + " y2:" + criaQuandradoY2);
 
-        int auxI = 0;
+        int auxX = 0;
 
         for (int x = criaQuandradoX1; x <= criaQuandradoX2; x++) {
-            int auxJ = 0;
+            int auxY = 0;
             for (int y = criaQuandradoY1; y <= criaQuandradoY2; y++) {
                 Area a = areaDoMundo[x][y];
-                visao[auxI][auxJ] = a;
-                auxJ++;
+                visao[auxX][auxY] = a;
+                auxY++;
             }
-            auxI++;
+            auxX++;
         }
         return visao;
 
@@ -226,7 +255,7 @@ public class Mundo {
         return posicao + tamanhoDaVisao;
     }
 
-    public void executaOMunda() {
+    public boolean executaOMunda() {
 
         Object object = itemsASeremExecutados.remove(0);
         do {
@@ -259,6 +288,71 @@ public class Mundo {
                 itemsASeremExecutados.add(object);
             }
         } while (itemsASeremExecutados.size() > 0);
+        return false;
+    }
+    
+    
+    public Object executaOMunda(JTable tabela) {
+        Object object = null;
+        if (!itemsASeremExecutados.isEmpty()){
+            object = itemsASeremExecutados.remove(0);
+        
+     //   do {
+            
+            if (object instanceof Coletor) {
+                Coletor c = (Coletor) object;
+                mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
+                Area[][] criaUmaVisao = criaUmaVisao(c.getxAtual(), c.getyAtual());
+                int xAntigo = c.getxAtual();
+                int yAntigo = c.getyAtual();
+                
+                atualizaVisaoModel(tabela);
+                //printaMundo();
+                c.printaVisao(criaUmaVisao);
+                
+                //printaMundo();
+                c.percepcao(criaUmaVisao);
+                mudaUmaAreaColetor(xAntigo, yAntigo, null);
+                mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
+                atualizaVisaoModel(tabela);
+                printaMundo();
+                if (c.getEnergiaAtual() == 0) {
+                    object = null;
+                }
+
+            }
+//            if (object instanceof Recarga) {
+//
+//            }
+//            if (object instanceof Lixeira) {
+//
+//            }
+            if (object != null) {
+                
+                itemsASeremExecutados.add(object);
+                return object;
+            }
+      
+       // } while (itemsASeremExecutados.size() > 0);
+      //  return false;
+        }
+        return null;
+    }
+    
+        public void atualizaVisaoModel(JTable tabela) {
+      //  printaMundo();
+        DefaultTableModel model = (DefaultTableModel) tabela.getModel();
+        
+        for (int x = 0; x < tamanhoDoX; x++) {
+        //    System.out.println("");
+            for (int y = 0; y < tamanhoDoY; y++) {
+
+                model.setValueAt((areaDoMundo[x][y]), x, y);
+            }
+        }
+        tabela.repaint();
+        tabela.revalidate();
+
     }
 
     /**
@@ -315,8 +409,8 @@ public class Mundo {
      * @param energiaMaxima energia maxima do coletor
      */
     public void criaUmColetor(int x, int y, int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
-        Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y,tamanhoVisaoDoColetor);
-        coletor.setEnergiaAtual(19);
+        Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y, tamanhoVisaoDoColetor);
+        coletor.setEnergiaAtual(energiaMaxima);
         Area area = areaDoMundo[x][y];
         if (area.getColetor() == null) {
             if (area.getItem() == null) {
@@ -331,14 +425,14 @@ public class Mundo {
         itemsASeremExecutados.add(coletor);
 
     }
-    
-    public void criaUmColetor( int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
+
+    public Coletor criaUmColetor(int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
         Random gerador = new Random();
         int x = gerador.nextInt(tamanhoDoX - 1);
         int y = gerador.nextInt(tamanhoDoY - 1);
-    
+
         Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y, tamanhoVisaoDoColetor);
-        coletor.setEnergiaAtual(19);
+     //   coletor.setEnergiaAtual(energiaMaxima);
         Area area = areaDoMundo[x][y];
         if (area.getColetor() == null && area.getItem() == null) {
 
@@ -348,6 +442,74 @@ public class Mundo {
         }
 
         itemsASeremExecutados.add(coletor);
-
+        
+        return coletor;
     }
+    
+    
+
+    public ArrayList<Area> getLocaisLixeiras() {
+        return locaisLixeiras;
+    }
+
+    public void setLocaisLixeiras(ArrayList<Area> locaisLixeiras) {
+        this.locaisLixeiras = locaisLixeiras;
+    }
+
+    public ArrayList<Area> getLocaisDosLixos() {
+        return locaisDosLixos;
+    }
+
+    public void setLocaisDosLixos(ArrayList<Area> locaisDosLixos) {
+        this.locaisDosLixos = locaisDosLixos;
+    }
+
+    public ArrayList<Area> getLocaisDasRecargas() {
+        return locaisDasRecargas;
+    }
+
+    public void setLocaisDasRecargas(ArrayList<Area> locaisDasRecargas) {
+        this.locaisDasRecargas = locaisDasRecargas;
+    }
+
+    public ArrayList<Object> getItemsASeremExecutados() {
+        return itemsASeremExecutados;
+    }
+
+    public void setItemsASeremExecutados(ArrayList<Object> itemsASeremExecutados) {
+        this.itemsASeremExecutados = itemsASeremExecutados;
+    }
+
+    public int getTamanhoDoX() {
+        return tamanhoDoX;
+    }
+
+    public void setTamanhoDoX(int tamanhoDoX) {
+        this.tamanhoDoX = tamanhoDoX;
+    }
+
+    public int getTamanhoDoY() {
+        return tamanhoDoY;
+    }
+
+    public void setTamanhoDoY(int tamanhoDoY) {
+        this.tamanhoDoY = tamanhoDoY;
+    }
+
+    public Area[][] getAreaDoMundo() {
+        return areaDoMundo;
+    }
+
+    public void setAreaDoMundo(Area[][] areaDoMundo) {
+        this.areaDoMundo = areaDoMundo;
+    }
+
+    public int getTamanhoVisaoDoColetor() {
+        return tamanhoVisaoDoColetor;
+    }
+
+    public void setTamanhoVisaoDoColetor(int tamanhoVisaoDoColetor) {
+        this.tamanhoVisaoDoColetor = tamanhoVisaoDoColetor;
+    }
+
 }

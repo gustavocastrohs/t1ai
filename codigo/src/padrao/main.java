@@ -14,35 +14,20 @@ public class main {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         // TODO code application logic here
-        Mundo m = new Mundo(10, 10, 4, 4, 2);
-
-        // 6 , 1 ( posição sugerida por mim , mas pode ser feito randomica) , capacidade do coletor, energia minma,energia maxima
-        m.criaUmColetor(6, 1, 2, 10, 30);
-//        m.criaUmColetor(6,1,30, 10, 30);
-
-        m.executaOMunda();
+//        //Mundo(ix, y, quantidadeDeLixoEsperada, quantidadeDeRecargas,quantidadeDeLixeirasEsperado,capacidadeDaLixeira,tamanhoVisaoDoColetor) {
+//        Mundo m = new Mundo(5, 5,5,4,4,15, 2);
+//
+//        // 6 , 1 ( posição sugerida por mim , mas pode ser feito randomica) , capacidade do coletor, energia minma,energia maxima
+//        m.criaUmColetor(2, 10, 30);
+//
+//
 //        m.executaOMunda();
-//        m.executaOMunda();
-//        m.executaOMunda();
-//        m.executaOMunda();
-//        m.executaOMunda();
-//        m.executaOMunda();
-//        m.executaOMunda();
-//        m.executaOMunda();
-
-        /*
-         m.mudaUmaAreaColetor(3, 4, new Coletor());
-        
-         m.printaMundo();
-         m.printaVisao(m.criaUmaVisao(3, 4, 2),2);
-         m.mudaUmaAreaColetor(3, 4, null);
-         
-         m.mudaUmaAreaColetor(4, 4, new Coletor());
-         */
-        m.printaMundo();
-        //m.printaVisao(m.criaUmaVisao(4, 4, 2),2);
+//
+//        m.printaMundo();
+TelaMapa m = new TelaMapa();
+m.setVisible(true);
 
     }
 
