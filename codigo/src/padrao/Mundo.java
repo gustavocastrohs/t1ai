@@ -402,47 +402,31 @@ public class Mundo {
 
     /**
      *
-     * @param x posicao
-     * @param y posicao
-     * @param capacidadeLixeira capacidade da lixeira
+     * @param capacidadeLixeiraMaxima
+     * @param capacidadeMinima
      * @param energiaMinima energia minima para o coletor chegar a uma lixeira
      * @param energiaMaxima energia maxima do coletor
+     * @return 
      */
-    public void criaUmColetor(int x, int y, int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
-        Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y, tamanhoVisaoDoColetor);
-        coletor.setEnergiaAtual(energiaMaxima);
-        Area area = areaDoMundo[x][y];
-        if (area.getColetor() == null) {
-            if (area.getItem() == null) {
+
+    public Coletor criaUmColetor(int capacidadeLixeiraMaxima,int capacidadeMinima, int energiaMinima, int energiaMaxima) {
+        Coletor coletor = null;
+        Area area = null;
+        do {
+            Random gerador = new Random();
+            int x = gerador.nextInt(tamanhoDoX - 1);
+            int y = gerador.nextInt(tamanhoDoY - 1);
+
+            coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeiraMaxima,capacidadeMinima, energiaMinima, energiaMaxima, x, y, tamanhoVisaoDoColetor);
+            //   coletor.setEnergiaAtual(energiaMaxima);
+            area = areaDoMundo[x][y];
+            if (area.getColetor() == null && area.getItem() == null) {
+
                 area.setColetor(coletor);
-            } else {
-                Random gerador = new Random();
-                int aleatorioX = gerador.nextInt(tamanhoDoX - 1);
-                int aleatorioY = gerador.nextInt(tamanhoDoY - 1);
-                criaUmColetor(aleatorioX, aleatorioY, capacidadeLixeira, energiaMinima, energiaMaxima);
             }
-        }
+        } while (area.getColetor() == null);
         itemsASeremExecutados.add(coletor);
 
-    }
-
-    public Coletor criaUmColetor(int capacidadeLixeira, int energiaMinima, int energiaMaxima) {
-        Random gerador = new Random();
-        int x = gerador.nextInt(tamanhoDoX - 1);
-        int y = gerador.nextInt(tamanhoDoY - 1);
-
-        Coletor coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeira, energiaMinima, energiaMaxima, x, y, tamanhoVisaoDoColetor);
-     //   coletor.setEnergiaAtual(energiaMaxima);
-        Area area = areaDoMundo[x][y];
-        if (area.getColetor() == null && area.getItem() == null) {
-
-            area.setColetor(coletor);
-        } else {
-            criaUmColetor(x, y, capacidadeLixeira, energiaMinima, energiaMaxima);
-        }
-
-        itemsASeremExecutados.add(coletor);
-        
         return coletor;
     }
     
