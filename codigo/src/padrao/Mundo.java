@@ -269,6 +269,7 @@ public class Mundo {
                 Coletor c = (Coletor) object;
                 mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
                 Area[][] criaUmaVisao = criaUmaVisao(c.getxAtual(), c.getyAtual());
+                Area[][] criaUmaVisaoParcial = criaUmaVisaoParcial(c.getxAtual(), c.getyAtual());
                 int xAntigo = c.getxAtual();
                 int yAntigo = c.getyAtual();
                 
@@ -277,7 +278,7 @@ public class Mundo {
                 c.printaVisao(criaUmaVisao,1);
                 
                 //printaMundo();
-                c.percepcao(criaUmaVisao);
+                c.percepcao(criaUmaVisao,criaUmaVisaoParcial);
                 mudaUmaAreaColetor(xAntigo, yAntigo, null);
                 mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
                 atualizaVisaoModel(tabelaVisaoMundo);
@@ -466,6 +467,37 @@ public class Mundo {
 
     public void setTamanhoVisaoDoColetor(int tamanhoVisaoDoColetor) {
         this.tamanhoVisaoDoColetor = tamanhoVisaoDoColetor;
+    }
+
+    private Area[][] criaUmaVisaoParcial(int posicaoColetorX, int posicaoColetorY) {
+
+        int inicializaVisao = 1 * 2 + 1;
+        Area[][] visao = new Area[inicializaVisao][inicializaVisao];
+
+        int criaQuandradoX1 = criaQuandradoX1(posicaoColetorX, 1);
+        int criaQuandradoX2 = criaQuandradoX2(posicaoColetorX, 1);
+        int criaQuandradoY1 = criaQuandradoY1(posicaoColetorY, 1);
+        int criaQuandradoY2 = criaQuandradoY2(posicaoColetorY, 1);
+
+        System.out.println("Posição do coletor");
+        System.out.println("x" + posicaoColetorX + " y:" + posicaoColetorY);
+        System.out.println("Visão do coletor");
+        System.out.println("x1: " + criaQuandradoX1 + " x2:" + criaQuandradoX2);
+        System.out.println("y1: " + criaQuandradoY1 + " y2:" + criaQuandradoY2);
+
+        int auxX = 0;
+
+        for (int x = criaQuandradoX1; x <= criaQuandradoX2; x++) {
+            int auxY = 0;
+            for (int y = criaQuandradoY1; y <= criaQuandradoY2; y++) {
+                Area a = areaDoMundo[x][y];
+                visao[auxX][auxY] = a;
+                auxY++;
+            }
+            auxX++;
+        }
+        
+        return visao;
     }
 
 }

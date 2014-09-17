@@ -35,7 +35,9 @@ public class Coletor {
 
     private boolean sentidoDoMovimento;
 
-    public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeiraMaxima, int energiaMinima, int energiaMaxima, int x, int y, int tamanhoVisaoDoColetor, JTable tabelaVisaoColetorTotal, JTable tabelaVisaoColetorParcial) {
+    public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeiraMaxima, int energiaMinima, int energiaMaxima,
+            int x, int y, int tamanhoVisaoDoColetor, 
+            JTable tabelaVisaoColetorTotal, JTable tabelaVisaoColetorParcial) {
         this.lixeiraDoColetor = new ArrayList<>();
         this.statusLixeiraCheia = false;
         this.locaisLixeiras = locaisLixeiras;
@@ -52,10 +54,10 @@ public class Coletor {
 
     }
 
-    public int percepcao(Area visaoParaDecisao[][]) {
+    public int percepcao(Area visaoParaDecisao[][], Area criaUmaVisaoMovimentacao[][]) {
         int tamanhoDoPassoDoColetor = 1;
         organizaLixeira();
-        Area[][] criaUmaVisaoMovimentacao = criaUmaVisaoMovimentacao(visaoParaDecisao, tamanhoDoPassoDoColetor);
+        //Area[][] criaUmaVisaoMovimentacao = criaUmaVisaoMovimentacao(visaoParaDecisao, tamanhoDoPassoDoColetor);
         atualizaVisaoColetorParcial(tabelaVisaoColetorParcial, criaUmaVisaoMovimentacao);
         atualizaVisaoColetorTotal(tabelaVisaoColetorTotal, visaoParaDecisao);
         if (statusConectaNaRecarrega == 0) {
@@ -78,16 +80,12 @@ public class Coletor {
                     }
                 }
                 return 0;
-            } else {
-                recarregar(criaUmaVisaoMovimentacao, new Recarga("inicial"), tamanhoDoPassoDoColetor);
-                return 0;
             }
-            
-        } else {
-
-            recarregar(criaUmaVisaoMovimentacao, new Recarga("inicial"), tamanhoDoPassoDoColetor);
 
         }
+
+        recarregar(criaUmaVisaoMovimentacao, new Recarga("inicial"), tamanhoDoPassoDoColetor);
+
         return 0;
     }
 
