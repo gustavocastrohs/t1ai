@@ -598,8 +598,10 @@ public class Coletor {
             }
         } else if (statusConectaNaRecarrega != 0 && (energiaAtual < energiaMaxima)) {
             recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual, tamanhoDoPassoDoColetor);
-            carregando(recarga);
-            return 0;
+            if (recarga != null) {
+                carregando(recarga);
+                return 0;
+            }
 
         } else if (energiaAtual >= energiaMaxima) {
             recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual, tamanhoDoPassoDoColetor);
