@@ -16,7 +16,7 @@ import javax.swing.table.DefaultTableModel;
  * @author Gustavo
  */
 public class TelaMapa extends javax.swing.JFrame {
-
+    
     private Mundo mundo;
 
     /**
@@ -63,10 +63,7 @@ public class TelaMapa extends javax.swing.JFrame {
         jt_capacidadeDaLixeiraColetorMaixma = new javax.swing.JTextField();
         jt_energiaMinimaColetor = new javax.swing.JTextField();
         jt_energiaMaximaColetor = new javax.swing.JTextField();
-        jLabel16 = new javax.swing.JLabel();
-        jt_capacidadeDaLixeiraColetorMinima = new javax.swing.JTextField();
         jButton1 = new javax.swing.JButton();
-        jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
         jButton10 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
@@ -76,9 +73,7 @@ public class TelaMapa extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         jLabel21 = new javax.swing.JLabel();
-        jLabel17 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        list1 = new java.awt.List();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -257,21 +252,10 @@ public class TelaMapa extends javax.swing.JFrame {
 
         jt_energiaMaximaColetor.setText("20");
 
-        jLabel16.setText("capacidadeDaLixeiraMinima");
-
-        jt_capacidadeDaLixeiraColetorMinima.setText("2");
-
         jButton1.setText("?");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
-            }
-        });
-
-        jButton8.setText("?");
-        jButton8.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton8ActionPerformed(evt);
             }
         });
 
@@ -301,8 +285,6 @@ public class TelaMapa extends javax.swing.JFrame {
 
         jLabel21.setText("jLabel21");
 
-        jLabel17.setText("jLabel17");
-
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -310,7 +292,6 @@ public class TelaMapa extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(24, 24, 24)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel17)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2)
                     .addComponent(jLabel3)
@@ -333,13 +314,9 @@ public class TelaMapa extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel17)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel21)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
         );
-
-        jScrollPane2.setViewportView(jList1);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -353,42 +330,31 @@ public class TelaMapa extends javax.swing.JFrame {
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel13)
                             .addComponent(jLabel14)
-                            .addComponent(jLabel15)
-                            .addComponent(jLabel16))
+                            .addComponent(jLabel15))
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(jt_capacidadeDaLixeiraColetorMinima)
                                 .addComponent(jt_capacidadeDaLixeiraColetorMaixma)
                                 .addComponent(jt_energiaMinimaColetor, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jt_energiaMaximaColetor, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jButton1)
-                            .addComponent(jButton8)
                             .addComponent(jButton9)
                             .addComponent(jButton10))))
                 .addGap(18, 18, 18)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
                     .addComponent(jt_capacidadeDaLixeiraColetorMaixma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel16)
-                    .addComponent(jt_capacidadeDaLixeiraColetorMinima, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton8))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel14)
                     .addComponent(jt_energiaMinimaColetor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -400,9 +366,9 @@ public class TelaMapa extends javax.swing.JFrame {
                     .addComponent(jButton10))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jButton4)
-                .addGap(24, 24, 24))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -412,29 +378,33 @@ public class TelaMapa extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(27, 27, 27)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jButton3)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                        .addContainerGap(12, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 863, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addComponent(jButton3)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 863, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(list1, javax.swing.GroupLayout.DEFAULT_SIZE, 114, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jButton3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(26, 26, 26)
+                        .addComponent(list1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 328, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
@@ -465,7 +435,7 @@ public class TelaMapa extends javax.swing.JFrame {
             int quantidadeDeLixeirasEsperado = Integer.parseInt(jt_quantidadeDeLixeirasEsperado.getText());
             int capacidadeDaLixeira = Integer.parseInt(jt_capacidadeDaLixeira.getText());
             int tamanhoVisaoDoColetor = Integer.parseInt(jt_tamanhoVisaoDoColetor.getText());
-
+            
             criaMundo(x, y, quantidadeDeLixoEsperada, quantidadeDeRecargas, quantidadeDeLixeirasEsperado, capacidadeDaLixeira, tamanhoVisaoDoColetor);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());
@@ -480,10 +450,9 @@ public class TelaMapa extends javax.swing.JFrame {
         // TODO add your handling code here:
         try {
             int capacidadeDaLixeiraColetorMaxima = Integer.parseInt(jt_capacidadeDaLixeiraColetorMaixma.getText());
-            int capacidadeDaLixeiraColetorMinima = Integer.parseInt(jt_capacidadeDaLixeiraColetorMinima.getText());
             int energiaMinimaColetor = Integer.parseInt(jt_energiaMinimaColetor.getText());;
             int energiaMaximaColetor = Integer.parseInt(jt_energiaMaximaColetor.getText());
-            criaUmColetor(capacidadeDaLixeiraColetorMaxima,capacidadeDaLixeiraColetorMinima, energiaMinimaColetor, energiaMaximaColetor);
+            criaUmColetor(capacidadeDaLixeiraColetorMaxima, energiaMinimaColetor, energiaMaximaColetor);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(rootPane, ex.getMessage());
         }
@@ -502,32 +471,27 @@ public class TelaMapa extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         // TODO add your handling code here:
-           JOptionPane.showMessageDialog(rootPane, "A visão é 2 * Tamanho Escolhido +1");
+        JOptionPane.showMessageDialog(rootPane, "A visão é 2 * Tamanho Escolhido +1");
     }//GEN-LAST:event_jButton6ActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
-           JOptionPane.showMessageDialog(rootPane, "O tamanho total do Mundo consistem em (tamanho do mundo)*(tamanho do mundo)");
+        JOptionPane.showMessageDialog(rootPane, "O tamanho total do Mundo consistem em (tamanho do mundo)*(tamanho do mundo)");
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-         JOptionPane.showMessageDialog(rootPane, "Quantos lixos podem ser armazenados na lixeira do coletor");
+        JOptionPane.showMessageDialog(rootPane, "Quantos lixos podem ser armazenados na lixeira do coletor");
     }//GEN-LAST:event_jButton1ActionPerformed
-
-    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
-         JOptionPane.showMessageDialog(rootPane, "Ponto de parada de descarregamento quando atingido este valor para o descarregamento");
-    }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
         // TODO add your handling code here:
-         JOptionPane.showMessageDialog(rootPane, "Energia minima do coletor para funcionar");
+        JOptionPane.showMessageDialog(rootPane, "Energia minima do coletor para funcionar");
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
         // TODO add your handling code here:
-         JOptionPane.showMessageDialog(rootPane, "Energia máxima do coletor para funcionar");
+        JOptionPane.showMessageDialog(rootPane, "Energia máxima do coletor para funcionar");
     }//GEN-LAST:event_jButton10ActionPerformed
 
     /**
@@ -574,7 +538,6 @@ public class TelaMapa extends javax.swing.JFrame {
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
-    private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
@@ -583,8 +546,6 @@ public class TelaMapa extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
-    private javax.swing.JLabel jLabel16;
-    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel21;
     private javax.swing.JLabel jLabel3;
@@ -593,16 +554,13 @@ public class TelaMapa extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JList jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable_mapa;
     private javax.swing.JTextField jt_capacidadeDaLixeira;
     private javax.swing.JTextField jt_capacidadeDaLixeiraColetorMaixma;
-    private javax.swing.JTextField jt_capacidadeDaLixeiraColetorMinima;
     private javax.swing.JTextField jt_energiaMaximaColetor;
     private javax.swing.JTextField jt_energiaMinimaColetor;
     private javax.swing.JTextField jt_quantidadeDeLixeirasEsperado;
@@ -610,6 +568,7 @@ public class TelaMapa extends javax.swing.JFrame {
     private javax.swing.JTextField jt_quantidadeDeRecargas;
     private javax.swing.JTextField jt_tamanhoVisaoDoColetor;
     private javax.swing.JTextField jt_x;
+    private java.awt.List list1;
     // End of variables declaration//GEN-END:variables
 
     /**
@@ -626,9 +585,9 @@ public class TelaMapa extends javax.swing.JFrame {
      */
     private int tamanhoDoX;
     private int tamanhoDoY;
-
+    
     public void criaMundo(int x, int y, int quantidadeDeLixoEsperada, int quantidadeDeRecargas, int quantidadeDeLixeirasEsperado, int capacidadeDaLixeira, int tamanhoVisaoDoColetor) throws Exception {
-
+        
         tamanhoDoX = x;
         tamanhoDoY = y;
 //Mundo(ix, y, quantidadeDeLixoEsperada, quantidadeDeRecargas,quantidadeDeLixeirasEsperado,capacidadeDaLixeira,tamanhoVisaoDoColetor) {
@@ -641,52 +600,53 @@ public class TelaMapa extends javax.swing.JFrame {
             throw new Exception("Algum campo está incompleto ou errado");
         }
     }
-
-    public void criaUmColetor(int capacidadeDaLixeiraMaxima,int capacidadeDaLixeiraMinima, int energiaMinima, int energiaMaxima) throws Exception {
+    
+    public void criaUmColetor(int capacidadeDaLixeiraMaxima, int energiaMinima, int energiaMaxima) throws Exception {
         try {
-            Coletor criaUmColetor = mundo.criaUmColetor(capacidadeDaLixeiraMaxima,capacidadeDaLixeiraMinima, energiaMinima, energiaMaxima);
-            JOptionPane.showMessageDialog(rootPane, "Seu novo coletor foi criado em : "+criaUmColetor.getxAtual() +" / " +criaUmColetor.getyAtual() );
+            Coletor criaUmColetor = mundo.criaUmColetor(capacidadeDaLixeiraMaxima, energiaMinima, energiaMaxima);
+            JOptionPane.showMessageDialog(rootPane, "Seu novo coletor foi criado em : " + criaUmColetor.getxAtual() + " / " + criaUmColetor.getyAtual());
             atualizaVisao();
         } catch (Exception e) {
             throw new Exception("Algum campo está incompleto ou errado");
         }
     }
-
+    
     public void iniciaOPrograma() {
 //        boolean executaOMunda = true;
 //        do {
         Object executaOMunda = mundo.executaOMunda(jTable_mapa);
-        if (executaOMunda instanceof  Coletor){
-            atualizaDadosDoColetor((Coletor)executaOMunda);
+        if (executaOMunda instanceof Coletor) {
+            atualizaDadosDoColetor((Coletor) executaOMunda);
         }
 //            atualizaVisao();
 //        } while (executaOMunda);
     }
-
+    
     public void atualizaVisao() {
         mundo.printaMundo();
         DefaultTableModel model = (DefaultTableModel) jTable_mapa.getModel();
         Area areaDoMundo[][] = mundo.getAreaDoMundo();
         for (int x = 0; x < tamanhoDoX; x++) {
-        //    System.out.println("");
+            //    System.out.println("");
             for (int y = 0; y < tamanhoDoY; y++) {
-
+                
                 model.setValueAt((areaDoMundo[x][y]), x, y);
             }
         }
-
+        
     }
-
     
-    public void atualizaDadosDoColetor(Coletor coletor){
-    jLabel1.setText("Coletor"+" x: "+coletor.getxAtual() +" / "+coletor.getyAtual());
-    jLabel2.setText("Energia Atual: "+coletor.getEnergiaAtual());
-    jLabel3.setText("Energia Minma: "+coletor.getEnergiaMinima());
-    jLabel4.setText("Energia Maxima:" + coletor.getEnergiaMaxima());
-    jLabel5.setText("Limite da lixeira Max: "+coletor.getCapacidadeLixeiraMaxima());
-    jLabel17.setText("Limite da lixeira Min: "+coletor.getCapacidadeLixeiraMinima());
-    jLabel21.setText("Usado da lixeira: "+coletor.getLixeiraDoColetor().size());
-    
-    
+    public void atualizaDadosDoColetor(Coletor coletor) {
+        jLabel1.setText("Coletor" + " x: " + coletor.getxAtual() + " / " + coletor.getyAtual());
+        jLabel2.setText("Energia Atual: " + coletor.getEnergiaAtual());
+        jLabel3.setText("Energia Minma: " + coletor.getEnergiaMinima());
+        jLabel4.setText("Energia Maxima:" + coletor.getEnergiaMaxima());
+        jLabel5.setText("Limite da lixeira Max: " + coletor.getCapacidadeLixeiraMaxima());        
+        jLabel21.setText("Usado da lixeira: " + coletor.getLixeiraDoColetor().size());
+        list1.removeAll();
+        for (Lixo lixo : coletor.getLixeiraDoColetor()) {
+            list1.add(lixo.toString());
+        }
+        
     }
 }

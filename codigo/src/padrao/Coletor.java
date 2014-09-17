@@ -21,7 +21,7 @@ public class Coletor {
     private ArrayList<Area> locaisPontosDeRecarga;
     //private ArrayList<TipoDeLixo> tipoDeLixeirasASeremVisitadas;
     private int capacidadeLixeiraMaxima;
-    private int capacidadeLixeiraMinima;
+
     private int energiaAtual;
     private int energiaMinima;
     private int energiaMaxima;
@@ -35,13 +35,12 @@ public class Coletor {
      */
     private boolean sentidoDoMovimento;
 
-    public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeiraMaxima, int capacidadeLixeiraMinima, int energiaMinima, int energiaMaxima, int x, int y, int tamanhoVisaoDoColetor) {
+    public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeiraMaxima, int energiaMinima, int energiaMaxima, int x, int y, int tamanhoVisaoDoColetor) {
         this.lixeiraDoColetor = new ArrayList<>();
         this.statusLixeiraCheia = false;
         this.locaisLixeiras = locaisLixeiras;
         this.locaisPontosDeRecarga = locaisPontosDeRecarga;
         this.capacidadeLixeiraMaxima = capacidadeLixeiraMaxima;
-        this.capacidadeLixeiraMinima = capacidadeLixeiraMinima;
         this.energiaAtual = energiaMaxima;
         this.energiaMinima = energiaMinima;
         this.energiaMaxima = energiaMaxima;
@@ -133,7 +132,7 @@ public class Coletor {
             }
         }
         
-            if (lixeiraDoColetor.size() > capacidadeLixeiraMinima) {
+            if (lixeiraDoColetor.size() ==0) {
                 statusLixeiraCheia = false;
             }
         
@@ -511,13 +510,6 @@ public class Coletor {
         this.capacidadeLixeiraMaxima = capacidadeLixeiraMaxima;
     }
 
-    public int getCapacidadeLixeiraMinima() {
-        return capacidadeLixeiraMinima;
-    }
-
-    public void setCapacidadeLixeiraMinima(int capacidadeLixeiraMinima) {
-        this.capacidadeLixeiraMinima = capacidadeLixeiraMinima;
-    }
 
     public int getEnergiaAtual() {
         return energiaAtual;

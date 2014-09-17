@@ -409,7 +409,7 @@ public class Mundo {
      * @return 
      */
 
-    public Coletor criaUmColetor(int capacidadeLixeiraMaxima,int capacidadeMinima, int energiaMinima, int energiaMaxima) {
+    public Coletor criaUmColetor(int capacidadeLixeiraMaxima, int energiaMinima, int energiaMaxima) {
         Coletor coletor = null;
         Area area = null;
         do {
@@ -417,7 +417,7 @@ public class Mundo {
             int x = gerador.nextInt(tamanhoDoX - 1);
             int y = gerador.nextInt(tamanhoDoY - 1);
 
-            coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeiraMaxima,capacidadeMinima, energiaMinima, energiaMaxima, x, y, tamanhoVisaoDoColetor);
+            coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeiraMaxima, energiaMinima, energiaMaxima, x, y, tamanhoVisaoDoColetor);
             //   coletor.setEnergiaAtual(energiaMaxima);
             area = areaDoMundo[x][y];
             if (area.getColetor() == null && area.getItem() == null) {
