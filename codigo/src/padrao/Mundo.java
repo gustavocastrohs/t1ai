@@ -281,7 +281,7 @@ public class Mundo {
                 c.percepcao(criaUmaVisao,criaUmaVisaoParcial);
                 mudaUmaAreaColetor(xAntigo, yAntigo, null);
                 mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
-                atualizaVisaoModel(tabelaVisaoMundo);
+            //    atualizaVisaoModel(tabelaVisaoMundo);
                 printaMundo();
                 if (c.getEnergiaAtual() == 0) {
                     object = null;
