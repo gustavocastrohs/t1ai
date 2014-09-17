@@ -7,7 +7,10 @@ package padrao;
 
 import static java.lang.Math.sqrt;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -19,23 +22,20 @@ public class Coletor {
     private boolean statusLixeiraCheia;
     private ArrayList<Area> locaisLixeiras;
     private ArrayList<Area> locaisPontosDeRecarga;
-    //private ArrayList<TipoDeLixo> tipoDeLixeirasASeremVisitadas;
     private int capacidadeLixeiraMaxima;
-
     private int energiaAtual;
     private int energiaMinima;
     private int energiaMaxima;
     private int xAtual;
     private int yAtual;
-    
+    private JTable tabelaVisaoColetorTotal;
+    private JTable tabelaVisaoColetorParcial;
+
     private int statusConectaNaRecarrega = 0;
-    private int tamanhoVisaoDoColetor;
-    /**
-     * sentidoDoMovimento = true frente sentidoDoMovimento = false retorno
-     */
+
     private boolean sentidoDoMovimento;
 
-    public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeiraMaxima, int energiaMinima, int energiaMaxima, int x, int y, int tamanhoVisaoDoColetor) {
+    public Coletor(ArrayList<Area> locaisLixeiras, ArrayList<Area> locaisPontosDeRecarga, int capacidadeLixeiraMaxima, int energiaMinima, int energiaMaxima, int x, int y, int tamanhoVisaoDoColetor, JTable tabelaVisaoColetorTotal, JTable tabelaVisaoColetorParcial) {
         this.lixeiraDoColetor = new ArrayList<>();
         this.statusLixeiraCheia = false;
         this.locaisLixeiras = locaisLixeiras;
@@ -47,42 +47,52 @@ public class Coletor {
         this.xAtual = x;
         this.yAtual = y;
         this.sentidoDoMovimento = true;
-        this.tamanhoVisaoDoColetor = tamanhoVisaoDoColetor;
+        this.tabelaVisaoColetorTotal = tabelaVisaoColetorTotal;
+        this.tabelaVisaoColetorParcial = tabelaVisaoColetorParcial;
 
     }
 
-    public int percepcao(Area visaoAtual[][]) {
+    public int percepcao(Area visaoParaDecisao[][]) {
+        int tamanhoDoPassoDoColetor = 1;
+        organizaLixeira();
+        Area[][] criaUmaVisaoMovimentacao = criaUmaVisaoMovimentacao(visaoParaDecisao, tamanhoDoPassoDoColetor);
+        atualizaVisaoColetorParcial(tabelaVisaoColetorParcial, criaUmaVisaoMovimentacao);
+        atualizaVisaoColetorTotal(tabelaVisaoColetorTotal, visaoParaDecisao);
         if (statusConectaNaRecarrega == 0) {
             gastaEnergia();
-            printaMeusStatus();
+//            printaMeusStatus();
             if (verificaSeTemEnergiaOBastante()) {
 
                 if (statusLixeiraCheia) {
-                    descarregarLixo(visaoAtual);
+                    descarregarLixo(criaUmaVisaoMovimentacao, tamanhoDoPassoDoColetor);
 
                     return 0;
                 } else {
 
-                    if (verificaSeHaLixoNaVisao(visaoAtual)) {
-                        recolherLixo(visaoAtual);
+                    if (verificaSeHaLixoNaVisao(visaoParaDecisao)) {
+                        recolherLixo(criaUmaVisaoMovimentacao);
                         return 0;
+                    } else {
+
+                        mover(criaUmaVisaoMovimentacao);
                     }
-
-                    mover(visaoAtual);
-
                 }
                 return 0;
             } else {
-                recarregar(visaoAtual, new Recarga("inicial"));
-
+                recarregar(criaUmaVisaoMovimentacao, new Recarga("inicial"), tamanhoDoPassoDoColetor);
+                return 0;
             }
-            return 0;
+            
         } else {
 
-            recarregar(visaoAtual, new Recarga("inicial"));
+            recarregar(criaUmaVisaoMovimentacao, new Recarga("inicial"), tamanhoDoPassoDoColetor);
 
         }
         return 0;
+    }
+
+    public void organizaLixeira() {
+        lixeiraDoColetor.removeAll(Arrays.asList(null, ""));
     }
 
     public boolean verificaSeHaLixoNaVisao(Area visaoAtual[][]) {
@@ -101,7 +111,7 @@ public class Coletor {
         return false;
     }
 
-    public int moverParaUmaLixeira(Area visaoAtual[][], ArrayList<TipoDeLixo> tipoDeLixeirasASeremVisitadas) {
+    public int moverParaUmaLixeira(Area visaoAtual[][], ArrayList<TipoDeLixo> tipoDeLixeirasASeremVisitadas, int tamanhoDoPassoDoColetor) {
         AreaCusto calcularTrajetoriaLixeira = null;
         Area areaTemporaria = null;
         Lixeira lixeira = null;
@@ -109,38 +119,41 @@ public class Coletor {
          * 1 - move-se para um lixo 2 - move-se para um alvo
          */
 
-        printaMeusStatus();
+//        printaMeusStatus();
         calcularTrajetoriaLixeira = calcularTrajetoriaLixeira(visaoAtual, tipoDeLixeirasASeremVisitadas);
 
       // xAtual = calcularTrajetoria.getArea().getX();
 //        yAtual = calcularTrajetoria.getArea().getY();
-
         if (calcularTrajetoriaLixeira.getCusto() <= 2) {
-            lixeira = verificaLixeiraQueEstaProximoDeMim(visaoAtual, tipoDeLixeirasASeremVisitadas);
+            lixeira = verificaLixeiraQueEstaProximoDeMim(visaoAtual, tipoDeLixeirasASeremVisitadas, tamanhoDoPassoDoColetor);
             if (lixeira != null) {
 
                 if (lixeira.isCheia() == false) {
 
                     for (int i = 0; i < lixeiraDoColetor.size(); i++) {
-                        Lixo lixo = lixeiraDoColetor.get(i);
-                        if (lixo.getTipoDeLixo() == lixeira.getTipoDeArmazenagem()) {
-                            lixeira.addLixo(lixeiraDoColetor.remove(i));
+                        Object o = lixeiraDoColetor.get(i);
+                        if (o != null) {
+                            Lixo lixo = (Lixo) o;
+                            if (lixo.getTipoDeLixo() == lixeira.getTipoDeArmazenagem()) {
+                                Lixo remove = lixeiraDoColetor.remove(i);
 
+                                lixeira.addLixo(remove);
+                                organizaLixeira();
+                            }
                         }
                     }
                 }
             }
         }
-        
-            if (lixeiraDoColetor.size() ==0) {
-                statusLixeiraCheia = false;
-            }
-        
+
+        if (lixeiraDoColetor.size() == 0) {
+            statusLixeiraCheia = false;
+        }
 
         xAtual = calcularTrajetoriaLixeira.getArea().getX();
         yAtual = calcularTrajetoriaLixeira.getArea().getY();
 
-        printaMeusStatus();
+//        printaMeusStatus();
         return 0;
 
     }
@@ -316,8 +329,8 @@ public class Coletor {
         return new AreaCusto(caminhoAtual.getArea(), custo);
     }
 
-    public Recarga verificaRecargaQueEstaProximoDeMim(Area visaoAtual[][]) {
-        printaVisao(visaoAtual);
+    public Recarga verificaRecargaQueEstaProximoDeMim(Area visaoAtual[][], int tamanhoDoPassoDoColetor) {
+        printaVisao(visaoAtual, tamanhoDoPassoDoColetor);
         for (int x = 0; x < visaoAtual.length; x++) {
 
             for (int y = 0; y < visaoAtual.length; y++) {
@@ -336,33 +349,33 @@ public class Coletor {
         return null;
     }
 
-    public Lixeira verificaLixeiraQueEstaProximoDeMim(Area visaoAtual[][], ArrayList<TipoDeLixo> alvos) {
+    public Lixeira verificaLixeiraQueEstaProximoDeMim(Area visaoAtual[][], ArrayList<TipoDeLixo> alvos, int tamanhoDoPassoDoColetor) {
         ArrayList<Lixeira> possiveisAlvos = new ArrayList<>();
-        printaVisao(visaoAtual);
-        
-            for (int x = 0; x < visaoAtual.length; x++) {
+        printaVisao(visaoAtual, tamanhoDoPassoDoColetor);
 
-                for (int y = 0; y < visaoAtual.length; y++) {
+        for (int x = 0; x < visaoAtual.length; x++) {
 
-                    Object o = visaoAtual[x][y];
-                    if (o != null) {
-                        Area a = (Area) o;
-                        if (a.getItem() instanceof Lixeira) {
-                            Lixeira lixeiraPossivel = (Lixeira) a.getItem();
-                            if (verificaSeTipoDeLixeiraPodeSerUsado(alvos, lixeiraPossivel)) {
-                                System.out.println("Achei uma Lixeira e está pertinho!");
-                               return  lixeiraPossivel;
-                            }
+            for (int y = 0; y < visaoAtual.length; y++) {
+
+                Object o = visaoAtual[x][y];
+                if (o != null) {
+                    Area a = (Area) o;
+                    if (a.getItem() instanceof Lixeira) {
+                        Lixeira lixeiraPossivel = (Lixeira) a.getItem();
+                        if (verificaSeTipoDeLixeiraPodeSerUsado(alvos, lixeiraPossivel)) {
+                            System.out.println("Achei uma Lixeira e está pertinho!");
+                            return lixeiraPossivel;
                         }
                     }
-
                 }
-            
+
+            }
+
         }
-       
+
         return null;
     }
-    
+
     public boolean verificaSeTipoDeLixeiraPodeSerUsado(ArrayList<TipoDeLixo> alvos, Lixeira aSerTestada) {
 
         for (TipoDeLixo tipo : alvos) {
@@ -491,7 +504,7 @@ public class Coletor {
 
     public void gastaEnergia() {
         energiaAtual--;
-        verificaSeTemEnergiaOBastante();
+//        verificaSeTemEnergiaOBastante();
     }
 
     public boolean verificaSeTemEnergiaOBastante() {
@@ -510,7 +523,6 @@ public class Coletor {
         this.capacidadeLixeiraMaxima = capacidadeLixeiraMaxima;
     }
 
-
     public int getEnergiaAtual() {
         return energiaAtual;
     }
@@ -519,7 +531,7 @@ public class Coletor {
         return energiaMinima;
     }
 
-    private void descarregarLixo(Area[][] visaoAtual) {
+    private void descarregarLixo(Area[][] visaoAtual, int tamanhoDoPassoDoColetor) {
 
         ArrayList<TipoDeLixo> tipoDeLixeirasASeremVisitadas = new ArrayList<>();
 
@@ -543,51 +555,54 @@ public class Coletor {
             tipoDeLixeirasASeremVisitadas.add(TipoDeLixo.plastico);
         }
 
-        moverParaUmaLixeira(visaoAtual, tipoDeLixeirasASeremVisitadas);
+        moverParaUmaLixeira(visaoAtual, tipoDeLixeirasASeremVisitadas, tamanhoDoPassoDoColetor);
     }
 
     public int quantidaDeLixosNaMinhaLixeira(TipoDeLixo tipo) {
         int total = 0;
         for (Lixo lixo : lixeiraDoColetor) {
-            if (lixo.getTipoDeLixo() == tipo) {
-                total++;
+            if (lixo != null) {
+                if (lixo.getTipoDeLixo() == tipo) {
+                    total++;
+                }
             }
-
         }
         return total;
     }
 
-    private int recarregar(Area[][] visaoAtual, Recarga r1) {
+    private int recarregar(Area[][] visaoAtual, Recarga r1, int tamanhoDoPassoDoColetor) {
 
         AreaCusto calcularTrajetoriaRecarga = calcularTrajetoriaRecarga(visaoAtual, r1);
         //Recarga recarga = (Recarga) calcularTrajetoriaRecarga.getArea().getItem();
         Recarga recarga = null;
-        if (calcularTrajetoriaRecarga.getCusto() <= 2 && statusConectaNaRecarrega == 0) {
-            recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual);
-            if (recarga != null) {
-                if (recarga.disponivelParaRecarga()) {
-                    //recarga ainda tem vagas
-                    statusConectaNaRecarrega = recarga.conectaParaRecarrega();
-                    xAtual = calcularTrajetoriaRecarga.getArea().getX();
-                    yAtual = calcularTrajetoriaRecarga.getArea().getY();
-                    carregando(recarga);
-                    return 0;
-                } else {
-                    //recarga precisou ser recalculada
-                    AreaCusto calcularTrajetoriaRecarga1 = calcularTrajetoriaRecarga(visaoAtual, recarga);
-                    xAtual = calcularTrajetoriaRecarga1.getArea().getX();
-                    yAtual = calcularTrajetoriaRecarga1.getArea().getY();
-                    return 0;
+        if (statusConectaNaRecarrega == 0) {
+            if (calcularTrajetoriaRecarga.getCusto() <= 2 && statusConectaNaRecarrega == 0) {
+                recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual, tamanhoDoPassoDoColetor);
+                if (recarga != null) {
+                    if (recarga.disponivelParaRecarga()) {
+                        //recarga ainda tem vagas
+                        statusConectaNaRecarrega = recarga.conectaParaRecarrega();
+                        xAtual = calcularTrajetoriaRecarga.getArea().getX();
+                        yAtual = calcularTrajetoriaRecarga.getArea().getY();
+                        carregando(recarga);
+                        return 0;
+                    } else {
+                        //recarga precisou ser recalculada
+                        AreaCusto calcularTrajetoriaRecarga1 = calcularTrajetoriaRecarga(visaoAtual, recarga);
+                        xAtual = calcularTrajetoriaRecarga1.getArea().getX();
+                        yAtual = calcularTrajetoriaRecarga1.getArea().getY();
+                        return 0;
+                    }
                 }
-            }
 
+            }
         } else if (statusConectaNaRecarrega != 0 && (energiaAtual < energiaMaxima)) {
-            recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual);
+            recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual, tamanhoDoPassoDoColetor);
             carregando(recarga);
             return 0;
 
         } else if (energiaAtual >= energiaMaxima) {
-            recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual);
+            recarga = verificaRecargaQueEstaProximoDeMim(visaoAtual, tamanhoDoPassoDoColetor);
             recarga.liberaPosicao(statusConectaNaRecarrega);
             statusConectaNaRecarrega = 0;
             // carregando(recarga);
@@ -596,7 +611,7 @@ public class Coletor {
         xAtual = calcularTrajetoriaRecarga.getArea().getX();
         yAtual = calcularTrajetoriaRecarga.getArea().getY();
 
-        printaMeusStatus();
+//        printaMeusStatus();
         return 0;
 
     }
@@ -605,7 +620,7 @@ public class Coletor {
         this.energiaAtual = energiaAtual;
     }
 
-    public void printaVisao(Area[][] criaUmaVisao) {
+    public void printaVisao(Area[][] criaUmaVisao, int tamanhoVisaoDoColetor) {
 
         System.out.println("printando a visao");
         int inicializaVisao = tamanhoVisaoDoColetor * 2 + 1;
@@ -617,16 +632,16 @@ public class Coletor {
             }
         }
         System.out.println("\n");
+//        atualizaVisaoColetorTotal(tabelaVisaoColetorTotal, criaUmaVisao);
         // System.out.println(locaisDosLixos);
     }
 
-    public void printaMeusStatus() {
-
-        System.out.println("minha energia atual é: " + energiaAtual);
-        System.out.println("Quantidade de itens na lixeira " + lixeiraDoColetor.size());
-
-    }
-
+//    public void printaMeusStatus() {
+//
+//        System.out.println("minha energia atual é: " + energiaAtual);
+//        System.out.println("Quantidade de itens na lixeira " + lixeiraDoColetor.size());
+//
+//    }
     public ArrayList<Lixo> getLixeiraDoColetor() {
         return lixeiraDoColetor;
     }
@@ -659,12 +674,57 @@ public class Coletor {
         this.statusConectaNaRecarrega = statusConectaNaRecarrega;
     }
 
-    public int getTamanhoVisaoDoColetor() {
-        return tamanhoVisaoDoColetor;
+    public Area[][] criaUmaVisaoMovimentacao(Area[][] visaoAtual, int tamanhoDoPassoDoColetor) {
+
+        int inicializaVisao = tamanhoDoPassoDoColetor * 2 + 1;
+        Area[][] visao = new Area[inicializaVisao][inicializaVisao];
+
+        System.out.println("Posição do coletor");
+        System.out.println("x" + xAtual + " y:" + yAtual);
+        System.out.println("Visão do coletor");
+
+        int auxX = 0;
+
+        for (int x = 1; x < 4; x++) {
+            int auxY = 0;
+            for (int y = 1; y < 4; y++) {
+                Object o = visaoAtual[x][y];
+                if (o != null) {
+                    Area a = (Area) o;
+                    visao[auxX][auxY] = a;
+                }
+                auxY++;
+            }
+            auxX++;
+        }
+        return visao;
+
     }
 
-    public void setTamanhoVisaoDoColetor(int tamanhoVisaoDoColetor) {
-        this.tamanhoVisaoDoColetor = tamanhoVisaoDoColetor;
-    }
+    public void atualizaVisaoColetorTotal(JTable tabela, Area[][] visao) {
+        //  printaMundo();
+        DefaultTableModel model = new DefaultTableModel(visao.length, visao.length);
+        tabela.setModel(model);
 
+         String[] cols = {"0","1","2","3","4"};
+        model.setDataVector(visao,cols);
+
+    }
+public void atualizaVisaoColetorParcial(JTable tabela, Area[][] visao) {
+        //  printaMundo();
+        DefaultTableModel model = new DefaultTableModel(visao.length, visao.length);
+        tabela.setModel(model);
+
+         String[] cols = {"0","1","2"};
+        model.setDataVector(visao,cols);
+
+    }
+    private void inicializaVisaoColetor(Area[][] visao) {
+
+        for (int x = 0; x < visao.length; x++) {
+            for (int y = 0; y < visao.length; y++) {
+                visao[x][y] = new Area(x, y);
+            }
+        }
+    }
 }

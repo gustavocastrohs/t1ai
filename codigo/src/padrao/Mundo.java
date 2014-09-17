@@ -160,7 +160,7 @@ public class Mundo {
         Random gerador = new Random();
 
         int aleatorio = gerador.nextInt(4);
-        String prefixo = "L";
+        String prefixo = "Lixo";
         if (aleatorio == 0 || aleatorio == 4) {
             return new Lixo(TipoDeLixo.vidro, prefixo + numeroDoLixo);
         }
@@ -178,7 +178,7 @@ public class Mundo {
     }
 
     private Recarga criaRecarga(int x, int y) {
-        String prefixo = "R";
+        String prefixo = "Rec";
         return new Recarga(prefixo + "-" + x + "/" + y);
 
     }
@@ -187,6 +187,7 @@ public class Mundo {
         String prefixo = tipo.toString();
         return new Lixeira(capacidade, tipo, prefixo + "-" + x + "/" + y);
     }
+ 
 
     public Area[][] criaUmaVisao(int posicaoColetorX, int posicaoColetorY) {
 
@@ -215,6 +216,7 @@ public class Mundo {
             }
             auxX++;
         }
+        
         return visao;
 
     }
@@ -255,44 +257,8 @@ public class Mundo {
         return posicao + tamanhoDaVisao;
     }
 
-    public boolean executaOMunda() {
-
-        Object object = itemsASeremExecutados.remove(0);
-        do {
-            if (object instanceof Coletor) {
-                Coletor c = (Coletor) object;
-                mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
-                Area[][] criaUmaVisao = criaUmaVisao(c.getxAtual(), c.getyAtual());
-                int xAntigo = c.getxAtual();
-                int yAntigo = c.getyAtual();
-
-                printaMundo();
-                c.printaVisao(criaUmaVisao);
-                //printaMundo();
-                c.percepcao(criaUmaVisao);
-                mudaUmaAreaColetor(xAntigo, yAntigo, null);
-                mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
-                printaMundo();
-                if (c.getEnergiaAtual() == 0) {
-                    object = null;
-                }
-
-            }
-            if (object instanceof Recarga) {
-
-            }
-            if (object instanceof Lixeira) {
-
-            }
-            if (object != null) {
-                itemsASeremExecutados.add(object);
-            }
-        } while (itemsASeremExecutados.size() > 0);
-        return false;
-    }
     
-    
-    public Object executaOMunda(JTable tabela) {
+    public Object executaOMunda(JTable tabelaVisaoMundo, JTable tabelaVisaoColetor) {
         Object object = null;
         if (!itemsASeremExecutados.isEmpty()){
             object = itemsASeremExecutados.remove(0);
@@ -306,15 +272,15 @@ public class Mundo {
                 int xAntigo = c.getxAtual();
                 int yAntigo = c.getyAtual();
                 
-                atualizaVisaoModel(tabela);
+                atualizaVisaoModel(tabelaVisaoMundo);
                 //printaMundo();
-                c.printaVisao(criaUmaVisao);
+                c.printaVisao(criaUmaVisao,1);
                 
                 //printaMundo();
                 c.percepcao(criaUmaVisao);
                 mudaUmaAreaColetor(xAntigo, yAntigo, null);
                 mudaUmaAreaColetor(c.getxAtual(), c.getyAtual(), c);
-                atualizaVisaoModel(tabela);
+                atualizaVisaoModel(tabelaVisaoMundo);
                 printaMundo();
                 if (c.getEnergiaAtual() == 0) {
                     object = null;
@@ -343,15 +309,21 @@ public class Mundo {
       //  printaMundo();
         DefaultTableModel model = (DefaultTableModel) tabela.getModel();
         
+        try{
         for (int x = 0; x < tamanhoDoX; x++) {
         //    System.out.println("");
             for (int y = 0; y < tamanhoDoY; y++) {
 
                 model.setValueAt((areaDoMundo[x][y]), x, y);
+                
             }
         }
-        tabela.repaint();
-        tabela.revalidate();
+        }catch (NullPointerException e){
+        System.out.println(e.getMessage());
+        
+        }
+        //tabela.repaint();
+        //tabela.revalidate();
 
     }
 
@@ -409,7 +381,7 @@ public class Mundo {
      * @return 
      */
 
-    public Coletor criaUmColetor(int capacidadeLixeiraMaxima, int energiaMinima, int energiaMaxima) {
+    public Coletor criaUmColetor(int capacidadeLixeiraMaxima, int energiaMinima, int energiaMaxima,JTable tabelaVisaoColetorTotal,JTable tabelaVisaoColetorParcial) {
         Coletor coletor = null;
         Area area = null;
         do {
@@ -417,7 +389,7 @@ public class Mundo {
             int x = gerador.nextInt(tamanhoDoX - 1);
             int y = gerador.nextInt(tamanhoDoY - 1);
 
-            coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeiraMaxima, energiaMinima, energiaMaxima, x, y, tamanhoVisaoDoColetor);
+            coletor = new Coletor(locaisLixeiras, locaisDasRecargas, capacidadeLixeiraMaxima, energiaMinima, energiaMaxima, x, y, tamanhoVisaoDoColetor,tabelaVisaoColetorTotal,tabelaVisaoColetorParcial);
             //   coletor.setEnergiaAtual(energiaMaxima);
             area = areaDoMundo[x][y];
             if (area.getColetor() == null && area.getItem() == null) {
