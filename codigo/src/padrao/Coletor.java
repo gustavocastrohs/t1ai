@@ -157,17 +157,41 @@ public class Coletor {
     }
 
     public void mover(Area visaoAtual[][]) {
-        Random gerador = new Random();
-        int aleatorioX = gerador.nextInt(visaoAtual.length);
-        int aleatorioY = gerador.nextInt(visaoAtual.length);
-        Area area = visaoAtual[aleatorioX][aleatorioY];
-        if (oCaminhoPodeSerUsado(area)) {
-            xAtual = area.getX();
-            yAtual = area.getY();
+        Area aSerTestada = visaoAtual[visaoAtual.length-1][visaoAtual.length-1];;
+        System.out.println("tamanho visao: " + visaoAtual.length);
+        if(sentidoDoMovimento){
+            if (oCaminhoPodeSerUsado(aSerTestada)) {
+                xAtual = xAtual; //linha
+                yAtual = yAtual+1;  //coluna  
+            } else {
+                if (oCaminhoPodeSerUsado(aSerTestada)) {
+                    xAtual = xAtual+1;
+                    yAtual = yAtual+1;
+                } else {
+                    if (oCaminhoPodeSerUsado(aSerTestada)) {
+                        xAtual = xAtual+1;
+                        yAtual = yAtual;
+                        sentidoDoMovimento = false;
+                    }
+                }
+            }
         } else {
-            mover(visaoAtual);
+            if (oCaminhoPodeSerUsado(aSerTestada)) {
+                xAtual = xAtual;
+                yAtual = yAtual-1;
+            } else {
+                if (oCaminhoPodeSerUsado(aSerTestada)) {
+                    xAtual = xAtual+1;
+                    yAtual = yAtual-1;
+                } else {
+                    if (oCaminhoPodeSerUsado(aSerTestada)) {
+                        xAtual = xAtual+1;
+                        yAtual = yAtual;
+                        sentidoDoMovimento = true;
+                    }
+                }
+            }
         }
-
     }
 
     public int recolherLixo(Area visaoAtual[][]) {
